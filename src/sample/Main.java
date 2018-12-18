@@ -1,9 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.geometry.Point2D;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -15,13 +12,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.util.Duration;
-import javafx.event.EventHandler;
-import javafx.event.ActionEvent;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -74,17 +66,23 @@ public class Main extends Application {
         TankImageFile = new File("Resources/Tanks/Green/right1.png");
         Image GreenRightImage = new Image(TankImageFile.toURI().toString());
 
-
+        // Board generation
         int n = 16;
-        int FieldWidth = (int) canvas.getHeight() / n;
-        Point2D[][] Board = new Point2D[n][n];
-        for(int i = 0; i < Board.length; i++)
-            for(int j = 0; j < Board[i].length; j++)
-            {
-                Board[i][j] = new Point2D(i * FieldWidth, j * FieldWidth);
-            }
+        int TileMeasurement = (int) canvas.getHeight() / n;
+        Board BattleField = new Board(n, n, TileMeasurement);
 
-        Tank tank = new Tank(GreenRightImage, Board[0][0]);
+        BattleField.GenerateMap();
+
+//        Tile[][] Board = new Tile[n][n];
+//
+//        for(int i = 0; i < Board.length; i++)
+//            for(int j = 0; j < Board[i].length; j++)
+//            {
+//                Board[i][j] = new PlainTile(i * FieldWidth, j * FieldWidth);
+//            }
+
+
+        Tank tank = new Tank(GreenRightImage, 0,0);
 
         final long startNanoTime = System.nanoTime();
 
@@ -94,85 +92,87 @@ public class Main extends Application {
 
         theScene.setOnKeyPressed(
                 e -> {
-//                    String code = e.getCode().toString();
+                    String code = e.getCode().toString();
 
                     // Prevent duplicates
-//                    if ( !input.contains(code) )
-//                        input.add( code );
+                    if ( !input.contains(code) ) {
+                        input.add(code);
 
-                    switch (e.getCode()) {
-                        case UP:
-                            if (tank.location.getY() > 0) {
-                                tank.location = new Point2D(tank.location.getX(), tank.location.getY() - 1);
-                                tank.texture = GreenUpImage;
-                            }
-                            break;
+                        if (code == "UP" && input.contains("DOWN"))
+                            input.remove("DOWN");
 
-                        case DOWN:
-                            if (tank.location.getY() < Board[0].length - 1) {
-                                tank.location = new Point2D(tank.location.getX(), tank.location.getY() + 1);
-                                tank.texture = GreenDownImage;
-                            }
-                            break;
+                        else if (code == "DOWN" && input.contains("UP"))
+                            input.remove("UP");
 
-                        case LEFT:
-                            if (tank.location.getX() > 0) {
-                                tank.location = new Point2D(tank.location.getX() - 1, tank.location.getY());
-                                tank.texture = GreenLeftImage;
-                            }
-                            break;
+                        else if (code == "LEFT" && input.contains("RIGHT"))
+                            input.remove("RIGHT");
 
-                        case RIGHT:
-                            if (tank.location.getX() < Board.length - 1) {
-                                tank.location = new Point2D(tank.location.getX() + 1, tank.location.getY());
-                                tank.texture = GreenRightImage;
-                            }
-                            break;
-
-                        default:
-                            break;
+                        else if (code == "RIGHT" && input.contains("LEFT"))
+                            input.remove("LEFT");
                     }
                 });
 
         theScene.setOnKeyReleased(
                 e -> {
-//                    String code = e.getCode().toString();
-//                    input.remove( code );
+                    String code = e.getCode().toString();
+                    if(input.contains(code))
+                        input.remove( code );
                 });
 
         new AnimationTimer()
         {
-            public void handle(long currentNanoTime)
-            {
+            public void handle(long currentNanoTime) {
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
 
                 double x = 232 + 128 * Math.cos(t);
                 double y = 232 + 128 * Math.sin(t);
 
-                double explosionX = 0;
-                double explosionY = 0;
+                Tile P1Location;
 
-                if((currentNanoTime - startNanoTime)%6 == 0)
-                {
-                    explosionX = random.nextInt((int)canvas.getWidth());
-                    explosionY = random.nextInt((int)canvas.getHeight());
+                // Add some delay after each update
+                // Change conditions of move to some IfPossible(x, y) function
+                // Movement by changing some IDs in Board [BattleField]?
+
+                if (input.contains("UP")) {
+                    if (BattleField.IsMovementPossible(tank.IX, tank.IY - 1)) {
+                        tank.IY--;
+                    }
+                    tank.texture = GreenUpImage;
+                } else if (input.contains("DOWN")) {
+                    if (BattleField.IsMovementPossible(tank.IX, tank.IY + 1)) {
+                        tank.IY++;
+                    }
+                    tank.texture = GreenDownImage;
+                }
+                if (input.contains("LEFT")) {
+                    if (BattleField.IsMovementPossible(tank.IX - 1, tank.IY)) {
+                        tank.IX--;
+                    }
+                    tank.texture = GreenLeftImage;
+
+                } else if (input.contains("RIGHT")) {
+                    if (BattleField.IsMovementPossible(tank.IX + 1, tank.IY)) {
+                        tank.IX++;
+                    }
+                    tank.texture = GreenRightImage;
                 }
 
+                P1Location = BattleField.getTile(tank.IX,tank.IY);
 
-                gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight());
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 gc.setGlobalAlpha(0.5);
-                gc.drawImage(RoboImage,0,0,canvas.getWidth(),canvas.getHeight());
+                gc.drawImage(RoboImage, 0, 0, canvas.getWidth(), canvas.getHeight());
                 gc.setGlobalAlpha(1);
                 gc.fillText("Привет, товарищ!", x, y);
                 gc.strokeText("Привет, товарищ!", x, y);
-                gc.drawImage(tank.texture, Board[(int)tank.location.getX()][(int)tank.location.getY()].getX(), Board[(int)tank.location.getX()][(int)tank.location.getY()].getY());
+                gc.drawImage(tank.texture, P1Location.IX, P1Location.IY, TileMeasurement, TileMeasurement);
                 //gc.drawImage( ufo.getFrame(t), explosionX, explosionY );
             }
         }.start();
 
         //primaryStage.setScene(theScene);
         primaryStage.show();
-        Canvas c =new Canvas(500,300);
+        //Canvas c =new Canvas(500,300);
 
 //        primaryStage.setTitle( "AnimatedImage Example" );
 //
@@ -210,6 +210,7 @@ public class Main extends Application {
 //
 //        primaryStage.show();
     }
+
 
 
     public static void main(String[] args) {

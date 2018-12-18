@@ -1,9 +1,8 @@
 package sample;
 
-import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 
-class Tank {
+class Tank extends Tile {
     private int hp; // how many shots can tank take
     private int level; //
     private int ammoType;
@@ -12,10 +11,14 @@ class Tank {
     /*private*/ Image texture; // depends on level of tank
     private int upgrades; // flags for each upgrade [4 youngest bits]
     //TEMP
-    Point2D location;
 
-    public Tank(Image texture, Point2D location) {
+    public Tank(Image texture, int x, int y) {
         this.texture = texture;
-        this.location = location;
+
+        IX = x;
+        IY = y;
+
+        CanMoveThrough = false;
+        CanShotThrough = false;
     }
 }
