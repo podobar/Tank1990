@@ -1,6 +1,9 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -18,6 +21,8 @@ import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Main extends Application {
@@ -57,11 +62,83 @@ public class Main extends Application {
         ufo.frames = imageArray;
         ufo.duration = 0.750;
 
+        File TankImageFile = new File("Resources/Tanks/Green/up1.png");
+        Image GreenUpImage = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/down1.png");
+        Image GreenDownImage = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/left1.png");
+        Image GreenLeftImage = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/right1.png");
+        Image GreenRightImage = new Image(TankImageFile.toURI().toString());
+
+
+        int n = 16;
+        int FieldWidth = (int) canvas.getHeight() / n;
+        Point2D[][] Board = new Point2D[FieldWidth][FieldWidth];
+        for(int i = 0; i < Board.length; i++)
+            for(int j = 0; j < Board[i].length; j++)
+            {
+                Board[i][j] = new Point2D(i * FieldWidth, j * FieldWidth);
+            }
+
+        Tank tank = new Tank(GreenRightImage, Board[0][0]);
 
         final long startNanoTime = System.nanoTime();
 
         Random random = new Random(13);
 
+        ArrayList<String> input = new ArrayList<String>();
+
+        theScene.setOnKeyPressed(
+                e -> {
+//                    String code = e.getCode().toString();
+
+                    // Prevent duplicates
+//                    if ( !input.contains(code) )
+//                        input.add( code );
+
+                    switch (e.getCode()) {
+                        case UP:
+                            if (tank.location.getY() > 0) {
+                                tank.location = new Point2D(tank.location.getX(), tank.location.getY() - 1);
+                                tank.texture = GreenUpImage;
+                            }
+                            break;
+
+                        case DOWN:
+                            if (tank.location.getY() < Board[0].length) {
+                                tank.location = new Point2D(tank.location.getX(), tank.location.getY() + 1);
+                                tank.texture = GreenDownImage;
+                            }
+                            break;
+
+                        case LEFT:
+                            if (tank.location.getX() > 0) {
+                                tank.location = new Point2D(tank.location.getX() - 1, tank.location.getY());
+                                tank.texture = GreenLeftImage;
+                            }
+                            break;
+
+                        case RIGHT:
+                            if (tank.location.getX() < Board.length) {
+                                tank.location = new Point2D(tank.location.getX() + 1, tank.location.getY());
+                                tank.texture = GreenRightImage;
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                });
+
+        theScene.setOnKeyReleased(
+                e -> {
+//                    String code = e.getCode().toString();
+//                    input.remove( code );
+                });
 
         new AnimationTimer()
         {
@@ -88,7 +165,8 @@ public class Main extends Application {
                 gc.setGlobalAlpha(1);
                 gc.fillText("Привет, товарищ!", x, y);
                 gc.strokeText("Привет, товарищ!", x, y);
-                gc.drawImage( ufo.getFrame(t), explosionX, explosionY );
+                gc.drawImage(tank.texture, Board[(int)tank.location.getX()][(int)tank.location.getY()].getX(), Board[(int)tank.location.getX()][(int)tank.location.getY()].getY());
+                //gc.drawImage( ufo.getFrame(t), explosionX, explosionY );
             }
         }.start();
 
