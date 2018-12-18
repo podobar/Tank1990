@@ -77,7 +77,7 @@ public class Main extends Application {
 
         int n = 16;
         int FieldWidth = (int) canvas.getHeight() / n;
-        Point2D[][] Board = new Point2D[FieldWidth][FieldWidth];
+        Point2D[][] Board = new Point2D[n][n];
         for(int i = 0; i < Board.length; i++)
             for(int j = 0; j < Board[i].length; j++)
             {
@@ -109,7 +109,7 @@ public class Main extends Application {
                             break;
 
                         case DOWN:
-                            if (tank.location.getY() < Board[0].length) {
+                            if (tank.location.getY() < Board[0].length - 1) {
                                 tank.location = new Point2D(tank.location.getX(), tank.location.getY() + 1);
                                 tank.texture = GreenDownImage;
                             }
@@ -123,7 +123,7 @@ public class Main extends Application {
                             break;
 
                         case RIGHT:
-                            if (tank.location.getX() < Board.length) {
+                            if (tank.location.getX() < Board.length - 1) {
                                 tank.location = new Point2D(tank.location.getX() + 1, tank.location.getY());
                                 tank.texture = GreenRightImage;
                             }
