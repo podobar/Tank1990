@@ -63,57 +63,61 @@ public class Board{
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc){
         for (MovingTile mt : MovingTiles
              ) {
+
+                int TextureChangeTime = (int) (15 / mt.getSpeed());
                 if(!mt.IsMoving)
                 {
-                    if (input.contains("UP")) {
+                    // Remap ints in getControl?
+                    if (input.contains(mt.getControl(0))) {
                         if (IsMovementPossible(mt.IX, mt.IY - 1)) {
                             mt.IY--;
                             mt.IsMoving = true;
                             mt.Direction = "UP";
                         }
-                        mt.texture = mt.TextureUp;
-                    } else if (input.contains("DOWN")) {
+
+                        // Always zero?
+                        mt.texture = mt.TextureUp[0];
+                    } else if (input.contains(mt.getControl(1))) {
                         if (IsMovementPossible(mt.IX, mt.IY + 1)) {
                             mt.IY++;
                             mt.IsMoving = true;
                             mt.Direction = "DOWN";
                         }
-                        mt.texture = mt.TextureDown;
+                        mt.texture = mt.TextureDown[0];
                     }
-                    if (input.contains("LEFT")) {
+                    if (input.contains(mt.getControl(2))) {
                         if (IsMovementPossible(mt.IX - 1, mt.IY)) {
                             mt.IX--;
                             mt.IsMoving = true;
                             mt.Direction = "LEFT";
                         }
-                        mt.texture = mt.TextureLeft;
+                        mt.texture = mt.TextureLeft[0];
 
-                    } else if (input.contains("RIGHT")) {
+                    } else if (input.contains(mt.getControl(3))) {
                         if (IsMovementPossible(mt.IX + 1, mt.IY)) {
                             mt.IX++;
                             mt.IsMoving = true;
                             mt.Direction = "RIGHT";
                         }
-                        mt.texture = mt.TextureRight;
+                        mt.texture = mt.TextureRight[0];
                     }
                 }
                 else {
                     Tile TileLocation = getTile(mt.IX, mt.IY);
+                    mt.setTextureChangeCounter(mt.getTextureChangeCounter()+1);
                     switch (mt.Direction) {
                         case "UP":
                             mt.Y -= (double) TileMeasurement / 60 * mt.getSpeed();
 
                             // Changing texture if needed, some ChangeTexture() function
-//                            if(mt.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0)
-//                            {
-//                                //Something like ChangeTexture, if earlier tank loaded two of them
-//                                if(tank.texture == GreenUp1Image)
-//                                    tank.texture = GreenUp2Image;
-//                                else
-//                                    tank.texture = GreenUp1Image;
-//
-//                                tank.tmpTextureChangeCounter = 0;
-//                            }
+
+                            if(mt.getTextureChangeCounter() % TextureChangeTime == 0)
+                            {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                mt.ChangeTexture();
+
+                                mt.setTextureChangeCounter(0);
+                            }
                             if (mt.Y <= TileLocation.IY) {
                                 mt.Y = TileLocation.IY;
                                 mt.IsMoving = false;
@@ -123,15 +127,12 @@ public class Board{
                         case "DOWN":
                             mt.Y += (double) TileMeasurement / 60 * mt.getSpeed();
 
-//                            if (mt.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0) {
-//                                //Something like ChangeTexture, if earlier tank loaded two of them
-//                                if (mt.texture == GreenDown1Image)
-//                                    mt.texture = GreenDown2Image;
-//                                else
-//                                    mt.texture = GreenDown1Image;
-//
-//                                mt.tmpTextureChangeCounter = 0;
-//                            }
+                            if (mt.getTextureChangeCounter() % TextureChangeTime == 0) {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                mt.ChangeTexture();
+
+                                mt.setTextureChangeCounter(0);
+                            }
 
                             if (mt.Y >= TileLocation.IY) {
                                 mt.Y = TileLocation.IY;
@@ -142,15 +143,12 @@ public class Board{
                         case "LEFT":
                             mt.X -= (double) TileMeasurement / 60 * mt.getSpeed();
 
-//                            if (mt.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0) {
-//                                //Something like ChangeTexture, if earlier tank loaded two of them
-//                                if (mt.texture == GreenLeft1Image)
-//                                    mt.texture = GreenLeft2Image;
-//                                else
-//                                    mt.texture = GreenLeft1Image;
-//
-//                                mt.tmpTextureChangeCounter = 0;
-//                            }
+                            if (mt.getTextureChangeCounter() % TextureChangeTime == 0) {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                mt.ChangeTexture();
+
+                                mt.setTextureChangeCounter(0);
+                            }
 
                             if (mt.X <= TileLocation.IX) {
                                 mt.X = TileLocation.IX;
@@ -161,15 +159,12 @@ public class Board{
                         case "RIGHT":
                             mt.X += (double) TileMeasurement / 60 * mt.getSpeed();
 
-//                            if (mt.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0) {
-//                                //Something like ChangeTexture, if earlier tank loaded two of them
-//                                if (mt.texture == GreenRight1Image)
-//                                    mt.texture = GreenRight2Image;
-//                                else
-//                                    mt.texture = GreenRight1Image;
-//
-//                                mt.tmpTextureChangeCounter = 0;
-//                            }
+                            if (mt.getTextureChangeCounter() % TextureChangeTime == 0) {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                mt.ChangeTexture();
+
+                                mt.setTextureChangeCounter(0);
+                            }
 
                             if (mt.X >= TileLocation.IX) {
                                 mt.X = TileLocation.IX;

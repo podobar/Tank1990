@@ -2,43 +2,45 @@ package sample;
 
 import javafx.scene.image.Image;
 
-class Tank extends MovingTile {
+
+// Should I add classes PlayerTank and EnemyTank?
+abstract public class Tank extends MovingTile {
     private int hp; // how many shots can tank take
     private int level; //
     private int ammoType;
-    //private double speed; // 1 means that tank moves 1 tile per second
+    //private double speed; // 1 means that tank moves 1 tile per second // Moved to MovingTile class
     private double attackSpeed;
-//    /*private*/ Image texture; // depends on level of tank
+//    /*private*/ Image texture; // depends on level of tank // Moved to Tile class
     private int upgrades; // flags for each upgrade [4 youngest bits]
 
     //TEMP
 
-    public int tmpTextureChangeCounter;
+    public Tank(){
 
-//    public double getSpeed() {
-//        return speed;
-//    }
+    }
 
-    public Tank(Image texture, int x, int y, Image textureUp, Image textureDown, Image textureLeft, Image textureRight) {
-        this.texture = texture;
+    public Tank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight) {
+        IX = iX;
+        IY = iY;
+        X = x;
+        Y = y;
 
-        TextureUp = textureUp;
-        TextureDown = textureDown;
-        TextureLeft = textureLeft;
-        TextureRight = textureRight;
+        this.texture = texturesRight[0];
 
-        IX = x;
-        IY = y;
-        X = 0;
-        Y = 0;
+        TextureUp = texturesUp.clone();
+        TextureDown = texturesDown.clone();
+        TextureLeft = texturesLeft.clone();
+        TextureRight = texturesRight.clone();
 
-        speed = 1;
+        speed = 2;
 
-        tmpTextureChangeCounter = 0;
+        TextureChangeCounter = 0;
 
         CanMoveThrough = false;
         CanShotThrough = false;
 
         IsMoving = false;
     }
+
 }
+
