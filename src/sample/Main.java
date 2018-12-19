@@ -1,6 +1,12 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -12,6 +18,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import javafx.animation.AnimationTimer;
+import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,15 +27,56 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Group root = new Group();
+
+//region Layout
+        HBox root = new HBox();
         primaryStage.setTitle("Tank 1990");
+        //primaryStage.setResizable(false);
 
         Scene theScene = new Scene(root);
         primaryStage.setScene(theScene);
-
         Canvas canvas = new Canvas(800, 512);
-        root.getChildren().add(canvas);
+        VBox menu = new VBox(20);
+        menu.setAlignment(Pos.CENTER);
+        HBox enemyBox = new HBox();
+        VBox player1Box = new VBox();
+        VBox player2Box = new VBox();
+        Button newGameButton = new Button("Reset");
+        player1Box.getChildren().addAll(new Label("Lives"), new Label("Score"));
+        player2Box.getChildren().addAll(new Label("Lives"), new Label("Score"));
+        canvas.setStyle(
+                "-fx-background-color: black;"
+        );
+        menu.setStyle(
+                "-fx-background-color: grey;" +
+                        "-fx-min-height: 512;"
+        );
+        enemyBox.setStyle(
+                "-fx-background-color: pink;" +
+                        "-fx-min-width: 180px;" +
+                        "-fx-min-height: 150px;"+
+                        "-fx-padding: 20px;"
+        );
+        player1Box.setStyle(
+                "-fx-background-color: yellow;" +
+                        "-fx-min-width: 180px;" +
+                        "-fx-min-height: 100px;"+
+                        "-fx-padding: 20px;"
+        );
+        player2Box.setStyle(
+                "-fx-background-color: green;" +
+                        "-fx-min-width: 180px;" +
+                        "-fx-min-height: 100px;"+
+                        "-fx-padding: 20px;"
+        );
+        newGameButton.setStyle(
+                "-fx-min-width: 100;" +
+                        "-fx-min-height: 50px;"
+        );
+        root.getChildren().addAll(canvas,menu);
+        menu.getChildren().addAll(enemyBox,player1Box,player2Box,newGameButton);
 
+//endregion
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         File RoboImageFile = new File("Robo.jpg");
@@ -53,6 +101,7 @@ public class Main extends Application {
 //        ufo.frames = imageArray;
 //        ufo.duration = 0.750;
 
+//region Loading resources
         File TankImageFile = new File("Resources/Tanks/Green/up1.png");
         Image GreenUp1Image = new Image(TankImageFile.toURI().toString());
 
@@ -101,9 +150,8 @@ public class Main extends Application {
 
         TankImageFile = new File("Resources/Tanks/Blue/right2.png");
         Image BlueRight2Image = new Image(TankImageFile.toURI().toString());
-
-
-        // Board generation
+//endregion
+//region Board and players generation
         int n = 16;
         int TileMeasurement = (int) canvas.getHeight() / n;
         Board BattleField = new Board(n, n, TileMeasurement);
@@ -174,7 +222,7 @@ public class Main extends Application {
                     if (input.contains(code))
                         input.remove(code);
                 });
-
+//endregion
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
@@ -196,7 +244,6 @@ public class Main extends Application {
                 BattleField.UpdateBoard(input, gc);
             }
         }.start();
-
         primaryStage.show();
     }
 
