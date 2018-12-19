@@ -1,5 +1,7 @@
 package sample;
 
+import java.util.ArrayList;
+
 public class Board{
     private Tile[][] ActualMap;
     private Tile[][] Map;
@@ -44,8 +46,13 @@ public class Board{
 
     public boolean IsMovementPossible(int i, int j) {
         if (i >= 0 && i < Width && j >= 0 && j < Height)
-            if (ActualMap[i][j].CanMoveThrough)
-                return true;
+            return ActualMap[i][j].CanMoveThrough;
+
+        // Throw exception IndexOutOfBoard?
         return false;
+    }
+
+    public void UpdateBoard(ArrayList<String> input){
+
     }
 }

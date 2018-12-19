@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.scene.image.Image;
+
 public abstract class Tile
 {
     boolean CanMoveThrough;
@@ -7,4 +9,5 @@ public abstract class Tile
     int IX;
     int IY;
 
+    Image texture;
 }

@@ -55,16 +55,28 @@ public class Main extends Application {
         ufo.duration = 0.750;
 
         File TankImageFile = new File("Resources/Tanks/Green/up1.png");
-        Image GreenUpImage = new Image(TankImageFile.toURI().toString());
+        Image GreenUp1Image = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/up2.png");
+        Image GreenUp2Image = new Image(TankImageFile.toURI().toString());
 
         TankImageFile = new File("Resources/Tanks/Green/down1.png");
-        Image GreenDownImage = new Image(TankImageFile.toURI().toString());
+        Image GreenDown1Image = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/down2.png");
+        Image GreenDown2Image = new Image(TankImageFile.toURI().toString());
 
         TankImageFile = new File("Resources/Tanks/Green/left1.png");
-        Image GreenLeftImage = new Image(TankImageFile.toURI().toString());
+        Image GreenLeft1Image = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/left2.png");
+        Image GreenLeft2Image = new Image(TankImageFile.toURI().toString());
 
         TankImageFile = new File("Resources/Tanks/Green/right1.png");
-        Image GreenRightImage = new Image(TankImageFile.toURI().toString());
+        Image GreenRight1Image = new Image(TankImageFile.toURI().toString());
+
+        TankImageFile = new File("Resources/Tanks/Green/right2.png");
+        Image GreenRight2Image = new Image(TankImageFile.toURI().toString());
 
         // Board generation
         int n = 16;
@@ -82,7 +94,7 @@ public class Main extends Application {
 //            }
 
 
-        Tank tank = new Tank(GreenRightImage, 0,0);
+        Tank tank = new Tank(GreenRight1Image, 0,0);
 
         final long startNanoTime = System.nanoTime();
 
@@ -129,43 +141,169 @@ public class Main extends Application {
 
                 Tile P1Location;
 
+                int tmpTextureChangeTime = 30;
+
                 // Add some delay after each update
                 // Change conditions of move to some IfPossible(x, y) function
                 // Movement by changing some IDs in Board [BattleField]?
 
-                if (input.contains("UP")) {
-                    if (BattleField.IsMovementPossible(tank.IX, tank.IY - 1)) {
-                        tank.IY--;
+//                if (input.contains("UP")) {
+//                    if (BattleField.IsMovementPossible(tank.IX, tank.IY - 1)) {
+//                        tank.IY--;
+//                    }
+//                    tank.texture = GreenUpImage;
+//                } else if (input.contains("DOWN")) {
+//                    if (BattleField.IsMovementPossible(tank.IX, tank.IY + 1)) {
+//                        tank.IY++;
+//                    }
+//                    tank.texture = GreenDownImage;
+//                }
+//                if (input.contains("LEFT")) {
+//                    if (BattleField.IsMovementPossible(tank.IX - 1, tank.IY)) {
+//                        tank.IX--;
+//                    }
+//                    tank.texture = GreenLeftImage;
+//
+//                } else if (input.contains("RIGHT")) {
+//                    if (BattleField.IsMovementPossible(tank.IX + 1, tank.IY)) {
+//                        tank.IX++;
+//                    }
+//                    tank.texture = GreenRightImage;
+//                }
+//
+                if(!tank.IsMoving) {
+                    if (input.contains("UP")) {
+                        if (BattleField.IsMovementPossible(tank.IX, tank.IY - 1)) {
+                            tank.IY--;
+                            tank.IsMoving = true;
+                            tank.Direction = "UP";
+                        }
+                        tank.texture = GreenUp1Image;
+                    } else if (input.contains("DOWN")) {
+                        if (BattleField.IsMovementPossible(tank.IX, tank.IY + 1)) {
+                            tank.IY++;
+                            tank.IsMoving = true;
+                            tank.Direction = "DOWN";
+                        }
+                        tank.texture = GreenDown1Image;
                     }
-                    tank.texture = GreenUpImage;
-                } else if (input.contains("DOWN")) {
-                    if (BattleField.IsMovementPossible(tank.IX, tank.IY + 1)) {
-                        tank.IY++;
-                    }
-                    tank.texture = GreenDownImage;
-                }
-                if (input.contains("LEFT")) {
-                    if (BattleField.IsMovementPossible(tank.IX - 1, tank.IY)) {
-                        tank.IX--;
-                    }
-                    tank.texture = GreenLeftImage;
+                    if (input.contains("LEFT")) {
+                        if (BattleField.IsMovementPossible(tank.IX - 1, tank.IY)) {
+                            tank.IX--;
+                            tank.IsMoving = true;
+                            tank.Direction = "LEFT";
+                        }
+                        tank.texture = GreenLeft1Image;
 
-                } else if (input.contains("RIGHT")) {
-                    if (BattleField.IsMovementPossible(tank.IX + 1, tank.IY)) {
-                        tank.IX++;
+                    } else if (input.contains("RIGHT")) {
+                        if (BattleField.IsMovementPossible(tank.IX + 1, tank.IY)) {
+                            tank.IX++;
+                            tank.IsMoving = true;
+                            tank.Direction = "RIGHT";
+                        }
+                        tank.texture = GreenRight1Image;
                     }
-                    tank.texture = GreenRightImage;
                 }
+                else{
+                    P1Location = BattleField.getTile(tank.IX, tank.IY);
+                    switch(tank.Direction) {
+                        case "UP":
+                            tank.Y -= (double) TileMeasurement / 60 * tank.getSpeed();
+                            if(tank.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0)
+                            {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                if(tank.texture == GreenUp1Image)
+                                    tank.texture = GreenUp2Image;
+                                else
+                                    tank.texture = GreenUp1Image;
 
-                P1Location = BattleField.getTile(tank.IX,tank.IY);
+                                tank.tmpTextureChangeCounter = 0;
+                            }
+                            if(tank.Y <= P1Location.IY) {
+                                tank.Y = P1Location.IY;
+                                tank.IsMoving = false;
+                            }
+                            break;
+
+                        case "DOWN":
+                            tank.Y += (double) TileMeasurement / 60 * tank.getSpeed();
+
+                            if(tank.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0)
+                            {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                if(tank.texture == GreenDown1Image)
+                                    tank.texture = GreenDown2Image;
+                                else
+                                    tank.texture = GreenDown1Image;
+
+                                tank.tmpTextureChangeCounter = 0;
+                            }
+
+                            if(tank.Y >= P1Location.IY) {
+                                tank.Y = P1Location.IY;
+                                tank.IsMoving = false;
+                            }
+                            break;
+
+                        case "LEFT":
+                            tank.X -= (double) TileMeasurement / 60 * tank.getSpeed();
+
+                            if(tank.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0)
+                            {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                if(tank.texture == GreenLeft1Image)
+                                    tank.texture = GreenLeft2Image;
+                                else
+                                    tank.texture = GreenLeft1Image;
+
+                                tank.tmpTextureChangeCounter = 0;
+                            }
+
+                            if(tank.X <= P1Location.IX) {
+                                tank.X = P1Location.IX;
+                                tank.IsMoving = false;
+                            }
+                            break;
+
+                        case "RIGHT":
+                            tank.X += (double) TileMeasurement / 60 * tank.getSpeed();
+
+                            if(tank.tmpTextureChangeCounter++ % tmpTextureChangeTime == 0)
+                            {
+                                //Something like ChangeTexture, if earlier tank loaded two of them
+                                if(tank.texture == GreenRight1Image)
+                                    tank.texture = GreenRight2Image;
+                                else
+                                    tank.texture = GreenRight1Image;
+
+                                tank.tmpTextureChangeCounter = 0;
+                            }
+
+                            if(tank.X >= P1Location.IX) {
+                                tank.X = P1Location.IX;
+                                tank.IsMoving = false;
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+//                BattleField.UpdateBoard(input);
+
+
+//                P1Location = BattleField.getTile(tank.IX,tank.IY);
 
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
                 gc.setGlobalAlpha(0.5);
                 gc.drawImage(RoboImage, 0, 0, canvas.getWidth(), canvas.getHeight());
                 gc.setGlobalAlpha(1);
+
                 gc.fillText("Привет, товарищ!", x, y);
                 gc.strokeText("Привет, товарищ!", x, y);
-                gc.drawImage(tank.texture, P1Location.IX, P1Location.IY, TileMeasurement, TileMeasurement);
+
+                gc.drawImage(tank.texture, tank.X, tank.Y, TileMeasurement, TileMeasurement);
                 //gc.drawImage( ufo.getFrame(t), explosionX, explosionY );
             }
         }.start();

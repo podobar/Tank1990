@@ -12,6 +12,7 @@ public class PlainTile extends Tile{
 
     public PlainTile()
     {
+        // Add texture initialization
         CanMoveThrough = true;
         CanShotThrough = true;
     }
