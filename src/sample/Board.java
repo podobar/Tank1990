@@ -31,9 +31,7 @@ public class Board{
         return Map[i][j];
     }
 
-    public Tile getOriginalTile(int i, int j){
-        return Map[i][j];
-    }
+    // Add checking whether some MovingTile isn't on Tile (collisions)
 
     public void GenerateMap(){
         MovingTiles = new LinkedList<>();   // <MovingTile>
@@ -47,6 +45,8 @@ public class Board{
             }
     }
 
+
+    // Add checking MovingTiles
     public boolean IsMovementPossible(int i, int j) {
         if (i >= 0 && i < Width && j >= 0 && j < Height)
             return Map[i][j].CanMoveThrough;
@@ -67,8 +67,8 @@ public class Board{
                 int TextureChangeTime = (int) (15 / mt.getSpeed());
                 if(!mt.IsMoving)
                 {
-                    // Remap ints in getControl?
-                    if (input.contains(mt.getControl(0))) {
+                    // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
+                    if (mt.getClass() != PlayerTank.class || (input.contains(((PlayerTank)mt).getControl(0)))) {
                         if (IsMovementPossible(mt.IX, mt.IY - 1)) {
                             mt.IY--;
                             mt.IsMoving = true;
@@ -77,7 +77,7 @@ public class Board{
 
                         // Always zero?
                         mt.texture = mt.TextureUp[0];
-                    } else if (input.contains(mt.getControl(1))) {
+                    } else if (mt.getClass() != PlayerTank.class || (input.contains(((PlayerTank)mt).getControl(1)))) {
                         if (IsMovementPossible(mt.IX, mt.IY + 1)) {
                             mt.IY++;
                             mt.IsMoving = true;
@@ -85,7 +85,7 @@ public class Board{
                         }
                         mt.texture = mt.TextureDown[0];
                     }
-                    if (input.contains(mt.getControl(2))) {
+                    if (mt.getClass() != PlayerTank.class || (input.contains(((PlayerTank)mt).getControl(2)))) {
                         if (IsMovementPossible(mt.IX - 1, mt.IY)) {
                             mt.IX--;
                             mt.IsMoving = true;
@@ -93,7 +93,7 @@ public class Board{
                         }
                         mt.texture = mt.TextureLeft[0];
 
-                    } else if (input.contains(mt.getControl(3))) {
+                    } else if (mt.getClass() != PlayerTank.class || (input.contains(((PlayerTank)mt).getControl(3)))) {
                         if (IsMovementPossible(mt.IX + 1, mt.IY)) {
                             mt.IX++;
                             mt.IsMoving = true;

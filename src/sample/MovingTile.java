@@ -61,8 +61,4 @@ public abstract class MovingTile extends Tile
             }
             return iNow == textures.length - 1? 0 : iNow + 1;
     }
-
-    public String getControl(int i){
-        return "You have no control here.";
-    }
 }
