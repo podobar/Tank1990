@@ -53,6 +53,9 @@ public class Main extends Application {
 //        ufo.frames = imageArray;
 //        ufo.duration = 0.750;
 
+        // Shorten to something like:
+        // texture = new Image((new File("Explosion1/1.png")).toURI().toString());
+
         File TankImageFile = new File("Resources/Tanks/Green/up1.png");
         Image GreenUp1Image = new Image(TankImageFile.toURI().toString());
 
@@ -126,7 +129,7 @@ public class Main extends Application {
                 new Image[]{GreenDown1Image, GreenDown2Image},
                 new Image[]{GreenLeft1Image, GreenLeft2Image},
                 new Image[]{GreenRight1Image, GreenRight2Image},
-                new String[]{"UP", "DOWN", "LEFT", "RIGHT"}
+                new String[]{"UP", "DOWN", "LEFT", "RIGHT", "SLASH"}
         );
 
         Tank tank2 = new PlayerTank(
@@ -136,7 +139,7 @@ public class Main extends Application {
                 new Image[]{BlueDown1Image, BlueDown2Image},
                 new Image[]{BlueLeft1Image, BlueLeft2Image},
                 new Image[]{BlueRight1Image, BlueRight2Image},
-                new String[]{"W", "S", "A", "D"}
+                new String[]{"W", "S", "A", "D", "G"}
         );
 
         BattleField.AddMovingTile(tank);
