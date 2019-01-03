@@ -135,6 +135,8 @@ public class GameViewController {
         AnimationTimer timer  =new AnimationTimer() {
             @Override
             public void handle(long now) {
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
                 BattleField.UpdateBoard(input, gc);
             }
         };
