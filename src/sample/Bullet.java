@@ -24,4 +24,33 @@ public class Bullet extends MovingTile {
         texture = new Image(new File("Resources/Explosion1/1.png").toURI().toString());
         TextureUp = TextureDown = TextureLeft = TextureRight = new Image[]{texture};
     }
+
+    public double getX(){
+        return X;
+    }
+
+    public double getY(){
+        return Y;
+    }
+
+    public boolean CheckCollision(double r, double x, double y, int size) {
+        double midX = X + r;
+        double midY = Y + r;
+
+        if (midX >= x && midX <= x + size && midY >= y && midY <= y + size)
+            return true;
+
+        // From left or right
+        if((x - midX <= r || midX - (x+size) <= r) && (y <= midY || midY >= y + size))
+            return true;
+
+        // From up or down
+        if((y - midY <= r || midY - (y+size) <= r) && (x <= midX || midX >= x + size))
+            return true;
+
+//        if ((x - midX) * (x - midX) + (y - midY) * (y - midY) < r * r)
+//            return true;
+
+        return false;
+    }
 }
