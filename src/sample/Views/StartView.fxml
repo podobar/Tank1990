@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.canvas.Canvas?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="sample.StartViewController"
+      minHeight="512" minWidth="1000">
+
+    <Label text="Tank 1990: Rebirth"/>
+    <HBox>
+        <VBox>
+            <Canvas fx:id="player1TankImage"/>
+            <HBox>
+                <Button fx:id="player1MoveUpButton"/>
+                <Button fx:id="player1MoveDownButton"/>
+                <Button fx:id="player1MoveLeftButton"/>
+                <Button fx:id="player1MoveRightButton"/>
+            </HBox>
+        </VBox>
+        <VBox>
+            <Canvas fx:id="player2TankImage"/>
+            <HBox>
+                <Button fx:id="player2MoveUpButton"/>
+                <Button fx:id="player2MoveDownButton"/>
+                <Button fx:id="player2MoveLeftButton"/>
+                <Button fx:id="player2MoveRightButton"/>
+            </HBox>
+        </VBox>
+    </HBox>
+    <CheckBox text="2 players"/>
+</VBox>

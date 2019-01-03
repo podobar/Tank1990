@@ -16,7 +16,7 @@ import static java.lang.Thread.sleep;
 
 //Handles events of main game window
 //TO DO: create and connect start window and end game window
-public class GameMapController {
+public class GameViewController {
     @FXML
     VBox menu, player1Box, player2Box;
     @FXML

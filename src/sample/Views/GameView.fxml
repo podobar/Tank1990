@@ -9,7 +9,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="sample.GameMapController"
+      fx:controller="sample.GameViewController"
       style="-fx-background-color: black;">
     <Canvas fx:id="canvas"  height="512" width="800" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" />
     <VBox fx:id="menu" spacing="20" minHeight="512" style="-fx-background-color: grey;" alignment="center">
