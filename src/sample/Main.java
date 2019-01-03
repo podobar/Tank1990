@@ -156,7 +156,7 @@ public class Main extends Application {
 //region Board and players generation
         int n = 16;
         int TileMeasurement = (int) canvas.getHeight() / n;
-        Board BattleField = new Board(n, n, TileMeasurement);
+        Board BattleField = new Board((int) canvas.getWidth() / TileMeasurement, n, TileMeasurement);
 
         BattleField.GenerateMap();
 
@@ -229,7 +229,7 @@ public class Main extends Application {
             public void handle(long currentNanoTime) {
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
 
-                double x = 232 + 128 * Math.cos(t);
+                double x = (int)(canvas.getWidth() / 4) + 128 * Math.cos(t);
                 double y = 232 + 128 * Math.sin(t);
 
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
