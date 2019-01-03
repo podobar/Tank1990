@@ -10,7 +10,7 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="sample.Controllers.StartViewController"
-      minHeight="512" minWidth="1000" alignment="center">
+      minHeight="512" minWidth="980" alignment="center">
 
     <Label text="Tank 1990: Rebirth"/>
     <HBox alignment="center">

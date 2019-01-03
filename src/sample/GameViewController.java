@@ -24,7 +24,6 @@ public class GameViewController {
     @FXML
     Canvas canvas;
     ArrayList<String> input = new ArrayList<>();
-
     public void keyPressed(KeyEvent keyEvent){
         String code = keyEvent.getCode().toString();
         if (!input.contains(code)) {
@@ -133,9 +132,26 @@ public class GameViewController {
         ArrayList<String> input = new ArrayList<>();
 
         AnimationTimer timer  =new AnimationTimer() {
+            long lastUpdate = 0;
             @Override
-            public void handle(long now) {
-                BattleField.UpdateBoard(input, gc);
+            public void handle(long currentNanoTime) {
+                if(currentNanoTime-lastUpdate >=200_000_000)
+                {
+                    double t = (currentNanoTime - startNanoTime) / 1000000000.0;
+
+                    double x = 232 + 128 * Math.cos(t);
+                    double y = 232 + 128 * Math.sin(t);
+
+                    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+                    gc.setGlobalAlpha(0.75);
+                    gc.fillText("Привет, товарищ!", x, y);
+                    gc.strokeText("Привет, товарищ!", x, y);
+
+                    gc.setGlobalAlpha(1);
+                    lastUpdate =currentNanoTime;
+                    BattleField.UpdateBoard(input, gc);
+                }
             }
         };
         timer.start();
