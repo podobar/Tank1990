@@ -8,8 +8,8 @@
 
 <HBox xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="sample.EndViewController"
-            minHeight="512" minWidth="1000">>
+            fx:controller="sample.Controllers.EndViewController"
+            minHeight="512" minWidth="1000">
     <Label text="Tank 1990: Rebirth"/>
     <VBox fx:id="player1StatsBox">
 

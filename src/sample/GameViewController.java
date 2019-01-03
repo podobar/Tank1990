@@ -105,8 +105,6 @@ public class GameViewController {
 
         BattleField.GenerateMap();
 
-
-
         Tank tank = new PlayerTank(
                 0, 0,
                 BattleField.getTile(0, 0).IX, BattleField.getTile(0, 0).IY,
