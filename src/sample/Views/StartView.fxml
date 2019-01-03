@@ -7,30 +7,34 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="sample.Controllers.StartViewController"
-      minHeight="512" minWidth="1000" alignment="center">
+      minHeight="512" minWidth="980" alignment="center" spacing="20" >
 
     <Label text="Tank 1990: Rebirth"/>
-    <HBox alignment="center">
-        <VBox alignment="center">
-            <Canvas fx:id="player1TankImage"/>
-            <Button fx:id="player1MoveUpButton" text="↑"/>
-            <HBox>
-                <Button fx:id="player1MoveDownButton" text="↓"/>
-                <Button fx:id="player1MoveLeftButton" text=""/>
-                <Button fx:id="player1MoveRightButton"/>
+    <HBox alignment="center" spacing="20">
+        <VBox alignment="center" spacing="20">
+            <ImageView fx:id="player1TankImage" fitHeight="30" fitWidth="30"/>
+            <Label text="W"/>
+            <HBox spacing="20">
+                <Label text="A"/>
+                <Label text="G"/>
+                <Label text="D"/>
             </HBox>
+            <Label text="S"/>
         </VBox>
-        <VBox alignment="center">
-            <Canvas fx:id="player2TankImage"/>
-            <Button fx:id="player2MoveUpButton"/>
-            <HBox>
-                <Button fx:id="player2MoveDownButton"/>
-                <Button fx:id="player2MoveLeftButton"/>
-                <Button fx:id="player2MoveRightButton"/>
+        <VBox alignment="center" spacing="20">
+            <ImageView fx:id="player2TankImage" fitHeight="30" fitWidth="30"/>
+            <Label text="↑"/>
+            <HBox spacing="20">
+                <Label text="←"/>
+                <Label text="/"/>
+                <Label text="→"/>
             </HBox>
+            <Label text="↓"/>
         </VBox>
     </HBox>
     <CheckBox text="2 players"/>

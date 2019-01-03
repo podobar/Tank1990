@@ -23,31 +23,7 @@ public class GameViewController {
     HBox enemyBox;
     @FXML
     Canvas canvas;
-    ArrayList<String> input = new ArrayList<>();
 
-    public void keyPressed(KeyEvent keyEvent){
-        String code = keyEvent.getCode().toString();
-        if (!input.contains(code)) {
-            input.add(code);
-
-            if (code == "UP" && input.contains("DOWN"))
-                input.remove("DOWN");
-
-            else if (code == "DOWN" && input.contains("UP"))
-                input.remove("UP");
-
-            else if (code == "LEFT" && input.contains("RIGHT"))
-                input.remove("RIGHT");
-
-            else if (code == "RIGHT" && input.contains("LEFT"))
-                input.remove("LEFT");
-        }
-    }
-    public void keyReleased(KeyEvent keyEvent){
-        String code = keyEvent.getCode().toString();
-        if (input.contains(code))
-            input.remove(code);
-    }
     public void initialize()
     {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -101,10 +77,12 @@ public class GameViewController {
         Image BlueRight2Image = new Image(TankImageFile.toURI().toString());
         int n = 16;
         int TileMeasurement = (int) canvas.getHeight() / n;
+
+        //Main.BattleField = new Board(n, n, TileMeasurement);
         Board BattleField = new Board(n, n, TileMeasurement);
 
+        //Main.BattleField.GenerateMap();
         BattleField.GenerateMap();
-
         Tank tank = new PlayerTank(
                 0, 0,
                 BattleField.getTile(0, 0).IX, BattleField.getTile(0, 0).IY,
@@ -128,19 +106,12 @@ public class GameViewController {
         BattleField.AddMovingTile(tank);
         BattleField.AddMovingTile(tank2);
 
-        final long startNanoTime = System.nanoTime();
-
-        ArrayList<String> input = new ArrayList<>();
-
-        AnimationTimer timer  =new AnimationTimer() {
-            @Override
+        new AnimationTimer() {
             public void handle(long now) {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-                BattleField.UpdateBoard(input, gc);
+                BattleField.UpdateBoard(Main.input, gc);
             }
-        };
-        timer.start();
+        }.start();
     }
 
 
