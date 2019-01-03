@@ -10,8 +10,9 @@
 <HBox fx:id="root" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="sample.GameViewController"
-      style="-fx-background-color: black;">
-    <Canvas fx:id="canvas"  height="512" width="800" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" />
+      style="-fx-background-color: black;"
+      onKeyPressed="#keyPressed" onKeyReleased="#keyReleased">
+    <Canvas fx:id="canvas"  height="512" width="800"  />
     <VBox fx:id="menu" spacing="20" minHeight="512" style="-fx-background-color: grey;" alignment="center">
         <HBox fx:id="enemyBox" minHeight="150" minWidth="180" style="-fx-background-color: pink"/>
         <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: blue; -fx-padding: 20px">
