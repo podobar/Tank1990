@@ -31,12 +31,12 @@ public class Main extends Application {
         Scene theScene = new Scene(root);
 
         primaryStage.setScene(theScene);
-        theScene.setOnKeyReleased(e -> {
+        game.setOnKeyReleased(e -> {
             String code = e.getCode().toString();
             if (input.contains(code))
                 input.remove(code);
         });
-        theScene.setOnKeyPressed(
+        game.setOnKeyPressed(
                 e -> {
                     String code = e.getCode().toString();
 

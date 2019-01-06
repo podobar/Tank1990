@@ -23,7 +23,7 @@ public class GameViewController {
     HBox enemyBox;
     @FXML
     Canvas canvas;
-
+    public static AnimationTimer timer;
     public void initialize()
     {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -106,12 +106,13 @@ public class GameViewController {
         BattleField.AddMovingTile(tank);
         BattleField.AddMovingTile(tank2);
 
-        new AnimationTimer() {
+        timer =
+            new AnimationTimer() {
             public void handle(long now) {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 BattleField.UpdateBoard(Main.input, gc);
             }
-        }.start();
+        };
     }
 
 
