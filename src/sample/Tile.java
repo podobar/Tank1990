@@ -8,7 +8,7 @@ public abstract class Tile
     boolean CanShotThrough;
     int IX;
     int IY;
-
+    int stamina;
     Image texture;
 }
 
