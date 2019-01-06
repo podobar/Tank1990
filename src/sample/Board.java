@@ -28,7 +28,6 @@ public class Board {
         Height = height;
         TileMeasurement = tileLength;
     }
-
     public Tile getTile(int i, int j) {
         return Map[i][j];
     }

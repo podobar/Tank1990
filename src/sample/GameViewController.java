@@ -78,11 +78,28 @@ public class GameViewController {
         int n = 16;
         int TileMeasurement = (int) canvas.getHeight() / n;
 
-        //Main.BattleField = new Board(n, n, TileMeasurement);
         Board BattleField = new Board(n, n, TileMeasurement);
 
-        //Main.BattleField.GenerateMap();
         BattleField.GenerateMap();
+//        for(int i=0;i<2;++i)
+//        {
+//            for(int j=0;j<4;++j){
+//                if(i==1 && (j==1 || j==2)){
+//                    //Eagle
+//                    PlainTile pt = new PlainTile(
+//                            BattleField.getWidth()/2-2+j,BattleField.getHeight()-2+i,
+//                            new Image(new File("Resources/Eagle/eagle.jpg").toURI().toString())
+//                            );
+//                }
+//                else{
+//                    //Bricks around the eagle
+//                    PlainTile pt = new PlainTile(
+//                            BattleField.getWidth()/2,BattleField.getHeight()-2+i,
+//                            new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())
+//                    );
+//                }
+//            }
+//        }
         Tank tank = new PlayerTank(
                 0, 0,
                 BattleField.getTile(0, 0).IX, BattleField.getTile(0, 0).IY,

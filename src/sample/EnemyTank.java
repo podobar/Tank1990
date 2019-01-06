@@ -7,17 +7,84 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class EnemyTank extends Tank{
-    //Enemy tanks (AI) knows where player and eagle is.
+    //Enemy tanks (AI) knows where players and eagle are.
     //AI tries to either destroy eagle, or kill players when it's possible
     Tile[][] map;
+    PlayerTank[] players;
     Tile eagle;
     int mapHeight,mapWidth;
     int shotDelay;
     private boolean CanShoot(){
-        //TO DO:
+        //TODO: Check - maybe you also have to decide in which direction shoot
         //If there is no indestructible terrain, friendly tanks between this tank and eagle ( this tank is in row || column of eagle) -> shoot eagle
+        if(eagle.IX == IX){
+            for(int i =Math.min(eagle.IY,IY)+1;i<Math.max(eagle.IY,IY)-1;++i)
+                if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                    return false;
+            return true;
+        }
+        else if(eagle.IY == IY){
+            for(int i =Math.min(eagle.IX,IX)+1;i<Math.max(eagle.IX,IX)-1;++i)
+                if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                    return false;
+            return true;
+        }
         //If closest player is in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
         //If there is another player (not closest one) in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
+        if(Math.sqrt(Math.pow(IX-players[0].IX,2) + Math.pow(IY-players[0].IY,2))<= Math.sqrt(Math.pow(IX-players[1].IX,2) + Math.pow(IY-players[1].IY,2))){
+            //Distance from P1 is smaller than P2
+            if(players[0].IX == IX){
+                for(int i =Math.min(players[0].IY,IY)+1;i<Math.max(players[0].IY,IY)-1;++i)
+                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+            else if(players[0].IY == IY){
+                for(int i =Math.min(players[0].IX,IX)+1;i<Math.max(players[0].IX,IX)-1;++i)
+                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+            else if(players[1].IX == IX){
+                for(int i =Math.min(players[1].IY,IY)+1;i<Math.max(players[1].IY,IY)-1;++i)
+                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+            else if(players[1].IY == IY){
+                for(int i =Math.min(players[1].IX,IX)+1;i<Math.max(players[1].IX,IX)-1;++i)
+                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+        }
+        else
+        {
+            if(players[1].IX == IX){
+                for(int i =Math.min(players[1].IY,IY)+1;i<Math.max(players[1].IY,IY)-1;++i)
+                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+            else if(players[1].IY == IY){
+                for(int i =Math.min(players[1].IX,IX)+1;i<Math.max(players[1].IX,IX)-1;++i)
+                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+            if(players[0].IX == IX){
+                for(int i =Math.min(players[0].IY,IY)+1;i<Math.max(players[0].IY,IY)-1;++i)
+                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+            else if(players[0].IY == IY){
+                for(int i =Math.min(players[0].IX,IX)+1;i<Math.max(players[0].IX,IX)-1;++i)
+                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                        return false;
+                return true;
+            }
+        }
         return true;
     }
     private void Shoot(){
@@ -25,11 +92,11 @@ public class EnemyTank extends Tank{
 
     }
     private boolean IsMovePossible(){
-        //TO DO: If any shots to objectives is not available(player tanks, eagle) and tank can't move (is stuck between terrain tiles, but not between other AI tanks) it shoots to terrain.
+        //TODO: If any shots to objectives is not available(player tanks, eagle) and tank can't move (is stuck between terrain tiles, but not between other AI tanks) it shoots to terrain.
         return true;
     }
     private void Move(){
-        //TO DO: Own implementation of A* algorithm to move through the map
+        //TODO: Own implementation of A* algorithm to move through the map
         //What we wave on start:
         // -IX, IY - tile coordinates,
         // -We know where the eagle and players are,
