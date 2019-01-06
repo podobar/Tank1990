@@ -5,7 +5,19 @@ import javafx.scene.image.Image;
 import java.io.File;
 
 public class Bullet extends MovingTile {
+    private int noClipTime;
+
+    public int getNoClipTime() {
+        return noClipTime;
+    }
+
+    public void setNoClipTime(int noClipTime) {
+        this.noClipTime = noClipTime;
+    }
+
     public Bullet(int iXStarting, int iYStarting, double x, double y, String direction) {
+
+        noClipTime = 60; // in 1/60 s
 
         IX = iXStarting;    // These two can be used as a destination.
         IY = iYStarting;
@@ -41,11 +53,11 @@ public class Bullet extends MovingTile {
             return true;
 
         // From left or right
-        if((x - midX <= r || midX - (x+size) <= r) && (y <= midY || midY >= y + size))
+        if ((Math.abs(x - midX) <= r || Math.abs(midX - (x + size)) <= r) && (y <= midY && midY <= y + size))
             return true;
 
         // From up or down
-        if((y - midY <= r || midY - (y+size) <= r) && (x <= midX || midX >= x + size))
+        if ((Math.abs(y - midY) <= r || Math.abs(midY - (y + size)) <= r) && (x <= midX && midX <= x + size))
             return true;
 
 //        if ((x - midX) * (x - midX) + (y - midY) * (y - midY) < r * r)

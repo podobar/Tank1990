@@ -51,7 +51,6 @@ public class Board {
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
                 Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
-
             }
     }
 
@@ -82,30 +81,32 @@ public class Board {
 
     // TODO: Bullets isEnemy property - to disable friendly fire within teams
     public void CheckCollisions() {
-        int bulletSize = TileMeasurement / 3;
+        int bulletSize = TileMeasurement / (3 * 2);
         int tankSize = TileMeasurement;
         for (Bullet b : Bullets
         ) {
-            for (PlayerTank pt : Players) {
-                if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize))
-                // TODO: after collision, Explode() is a placeholder.
-                    Explode();
-            }
+
+            if (b.getNoClipTime() <= 0)
+                for (PlayerTank pt : Players) {
+                    if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize))
+                        // TODO: after collision, Explode() is a placeholder.
+                        Explode();
+                }
+            else
+                b.setNoClipTime(b.getNoClipTime() - 1);
         }
     }
 
     public void Explode() {
         // Placeholder
+        int i = 13;
     }
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
         CheckCollisions();
-        for (PlayerTank pt : Players)
-        {
+        for (PlayerTank pt : Players) {
             int TextureChangeTime = (int) (15 / pt.getSpeed());
             if (!pt.IsMoving) {
-                // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
-                // Works now but I don't know whether casting is correct usage (looking for some C#-like "as").
                 // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
                 if (input.contains(pt.getControl(0))) {
                     if (IsMovementPossible(pt.IX, pt.IY - 1)) {
@@ -213,81 +214,43 @@ public class Board {
                 }
             }
 
-            // Interfaces IShotable, IMoveable?
-
-                if (!pt.isShooting())     // Not shooting
+            if (!pt.isShooting())     // Not shooting
+            {
+                if (input.contains(pt.getControl(4)))     // Add Controls to Tank?
                 {
-                        if (input.contains(pt.getControl(4)))     // Add Controls to Tank?
-                        {
-                            pt.setShooting(true);
-                            pt.ShotDelay();
-                            int x, y;
-                            if (pt.Direction.equals("UP")) {
-                                x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2*3);
-                                y = (int) pt.Y - TileMeasurement / (2*3); // TileMeasurement/3 - bullet size
-                            } else if (pt.Direction.equals("DOWN")) {
-                                x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2*3);
-                                y = (int) pt.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 - bullet size
-                            } else if (pt.Direction.equals("LEFT")) {
-                                x = (int) pt.X - TileMeasurement / (2*3);
-                                y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2*3); // TileMeasurement/3 - bullet size
-                            } else if (pt.Direction.equals("RIGHT")) {
-                                x = (int) pt.X + TileMeasurement - TileMeasurement / (2*3);
-                                y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2*3); // TileMeasurement/3 - bullet size
-                            } else {      // Exception - Direction different from U,D,L,R
-                                x = 0;
-                                y = 0;
-                            }
-                            MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction));
+                    pt.setShooting(true);
+                    pt.ShotDelay();
+                    int x, y;
+                    if (pt.Direction.equals("UP")) {
+                        x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                    } else if (pt.Direction.equals("DOWN")) {
+                        x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 = bullet size
+                    } else if (pt.Direction.equals("LEFT")) {
+                        x = (int) pt.X - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                    } else if (pt.Direction.equals("RIGHT")) {
+                        x = (int) pt.X + TileMeasurement - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                    } else {      // Exception - Direction different from U,D,L,R
+                        x = 0;
+                        y = 0;
+                    }
+                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction));
 
-                        }
-                } else { // Shooting
-                    pt.setShooting(pt.ReduceShotDelay());
                 }
+            } else { // Shooting
+                pt.setShooting(pt.ReduceShotDelay());
+            }
+            gc.drawImage(pt.texture, pt.X, pt.Y, TileMeasurement, TileMeasurement);
         }
 
         for (Bullet b : Bullets ) {
             int TextureChangeTime = (int) (15 / b.getSpeed());
-            if (!b.IsMoving) {
-                // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
-                // Works now but I don't know whether casting is correct usage (looking for some C#-like "as").
-                // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
+            if (b.IsMoving) {
 
                 // Bullet should always be moving.
-
-//                if (!(b instanceof PlayerTank) || (input.contains(((PlayerTank) b).getControl(0)))) {
-//                    if (IsMovementPossible(b.IX, b.IY - 1)) {
-//                        b.IY--;
-//                        b.IsMoving = true;
-//                        b.Direction = "UP";
-//                    }
-//
-//                    // Always zero?
-//                    b.texture = b.TextureUp[0];
-//                } else if (b.getClass() != PlayerTank.class || (input.contains(((PlayerTank) b).getControl(1)))) {
-//                    if (IsMovementPossible(b.IX, b.IY + 1)) {
-//                        b.IY++;
-//                        b.IsMoving = true;
-//                        b.Direction = "DOWN";
-//                    }
-//                    b.texture = b.TextureDown[0];
-//                } else if (b.getClass() != PlayerTank.class || (input.contains(((PlayerTank) b).getControl(2)))) {
-//                    if (IsMovementPossible(b.IX - 1, b.IY)) {
-//                        b.IX--;
-//                        b.IsMoving = true;
-//                        b.Direction = "LEFT";
-//                    }
-//                    b.texture = b.TextureLeft[0];
-//
-//                } else if (b.getClass() != PlayerTank.class || (input.contains(((PlayerTank) b).getControl(3)))) {
-//                    if (IsMovementPossible(b.IX + 1, b.IY)) {
-//                        b.IX++;
-//                        b.IsMoving = true;
-//                        b.Direction = "RIGHT";
-//                    }
-//                    b.texture = b.TextureRight[0];
-//                }
-            } else {
                 Tile TileLocation = getTile(b.IX, b.IY);
                 b.setTextureChangeCounter(b.getTextureChangeCounter() + 1);
                 switch (b.Direction) {
@@ -302,7 +265,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     case "DOWN":
@@ -314,7 +276,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     case "LEFT":
@@ -326,7 +287,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     case "RIGHT":
@@ -338,7 +298,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     default:
@@ -346,9 +305,7 @@ public class Board {
                 }
             }
 
-            //if (b instanceof Bullet)
             gc.drawImage(b.texture, b.X, b.Y, (int) (TileMeasurement / 3), (int) (TileMeasurement / 3));
-
         }
 
         for (EnemyTank et : Enemies
@@ -358,10 +315,7 @@ public class Board {
             // TODO: Enemies movement
 
             if (!et.IsMoving) {
-                // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
-                // Works now but I don't know whether casting is correct usage (looking for some C#-like "as").
-                // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
-//                if (!(et instanceof PlayerTank) || (input.contains(((PlayerTank) et).getControl(0)))) {
+ //                 if (!(et instanceof PlayerTank) || (input.contains(((PlayerTank) et).getControl(0)))) {
 //                    if (IsMovementPossible(et.IX, et.IY - 1)) {
 //                        et.IY--;
 //                        et.IsMoving = true;
