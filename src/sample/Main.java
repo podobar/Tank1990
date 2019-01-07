@@ -21,7 +21,13 @@ import javafx.animation.AnimationTimer;
 import javafx.stage.StageStyle;
 
 import java.io.File;
-import java.util.ArrayList;
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
+import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
+
+import java.io.File;
+import java.util.Random;
 
 public class Main extends Application {
 
@@ -82,25 +88,12 @@ public class Main extends Application {
         File RoboImageFile = new File("Robo.jpg");
         Image RoboImage = new Image(RoboImageFile.toURI().toString());
         gc.drawImage(RoboImage, 0, 0, canvas.getWidth(), canvas.getHeight());
-
         gc.setFill(Color.RED);
         gc.fill();
         gc.setStroke(Color.YELLOW);
         gc.setLineWidth(2);
         Font theFont = Font.font("Comic Sans", FontWeight.BOLD, 48);
         gc.setFont(theFont);
-
-//        // Animated explosion (named UFO :P)
-//        File file;
-//        AnimatedImage ufo = new AnimatedImage();
-//        Image[] imageArray = new Image[5];
-//        for (int i = 1; i < 6; i++) {
-//            file = new File("Resources/Explosion1/" + i + ".png");
-//            imageArray[i - 1] = new Image(file.toURI().toString());
-//        }
-//        ufo.frames = imageArray;
-//        ufo.duration = 0.750;
-
 //region Loading resources
         File TankImageFile = new File("Resources/Tanks/Green/up1.png");
         Image GreenUp1Image = new Image(TankImageFile.toURI().toString());
@@ -157,16 +150,6 @@ public class Main extends Application {
         Board BattleField = new Board(n, n, TileMeasurement);
 
         BattleField.GenerateMap();
-
-//        Tile[][] Board = new Tile[n][n];
-//
-//        for(int i = 0; i < Board.length; i++)
-//            for(int j = 0; j < Board[i].length; j++)
-//            {
-//                Board[i][j] = new PlainTile(i * FieldWidth, j * FieldWidth);
-//            }
-
-
         Tank tank = new PlayerTank(
                 0, 0,
                 BattleField.getTile(0, 0).IX, BattleField.getTile(0, 0).IY,
@@ -225,11 +208,31 @@ public class Main extends Application {
 //endregion
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
+        // Animated explosion (named UFO :P)
+        File file;
+        AnimatedImage ufo = new AnimatedImage();
+        Image[] imageArray = new Image[5];
+        for (int i = 1; i < 6; i++) {
+            file = new File("Resources/Explosion1/" + i + ".png");
+            imageArray[i - 1] = new Image(file.toURI().toString());
+        }
+        ufo.frames = imageArray;
+        ufo.duration = 0.750;
+
+
+        final long startNanoTime = System.nanoTime();
+
+        Random random = new Random(13);
+
+
+        new AnimationTimer()
+        {
+            public void handle(long currentNanoTime)
+            {
                 double t = (currentNanoTime - startNanoTime) / 1000000000.0;
 
                 double x = 232 + 128 * Math.cos(t);
                 double y = 232 + 128 * Math.sin(t);
-
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 gc.setGlobalAlpha(0.5);
