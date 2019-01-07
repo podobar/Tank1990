@@ -6,6 +6,7 @@ public abstract class Tile
 {
     boolean CanMoveThrough;
     boolean CanShotThrough;
+    boolean CanBeDestroyed;
     int IX;
     int IY;
     int stamina;

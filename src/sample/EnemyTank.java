@@ -14,18 +14,29 @@ public class EnemyTank extends Tank{
     Tile eagle;
     int mapHeight,mapWidth;
     int shotDelay;
+
+    private void Strategy(){
+        while(true){
+            if(CanShoot())
+                Shoot();
+            else if(IsMovePossible())
+                Move();
+            else
+                Shoot();
+        }
+    }
     private boolean CanShoot(){
         //TODO: Check - maybe you also have to decide in which direction shoot
         //If there is no indestructible terrain, friendly tanks between this tank and eagle ( this tank is in row || column of eagle) -> shoot eagle
         if(eagle.IX == IX){
             for(int i =Math.min(eagle.IY,IY)+1;i<Math.max(eagle.IY,IY)-1;++i)
-                if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
                     return false;
             return true;
         }
         else if(eagle.IY == IY){
             for(int i =Math.min(eagle.IX,IX)+1;i<Math.max(eagle.IX,IX)-1;++i)
-                if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
                     return false;
             return true;
         }
@@ -35,25 +46,25 @@ public class EnemyTank extends Tank{
             //Distance from P1 is smaller than P2
             if(players[0].IX == IX){
                 for(int i =Math.min(players[0].IY,IY)+1;i<Math.max(players[0].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
                         return false;
                 return true;
             }
             else if(players[0].IY == IY){
                 for(int i =Math.min(players[0].IX,IX)+1;i<Math.max(players[0].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
                         return false;
                 return true;
             }
             else if(players[1].IX == IX){
                 for(int i =Math.min(players[1].IY,IY)+1;i<Math.max(players[1].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
                         return false;
                 return true;
             }
             else if(players[1].IY == IY){
                 for(int i =Math.min(players[1].IX,IX)+1;i<Math.max(players[1].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
                         return false;
                 return true;
             }
@@ -62,25 +73,25 @@ public class EnemyTank extends Tank{
         {
             if(players[1].IX == IX){
                 for(int i =Math.min(players[1].IY,IY)+1;i<Math.max(players[1].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
                         return false;
                 return true;
             }
             else if(players[1].IY == IY){
                 for(int i =Math.min(players[1].IX,IX)+1;i<Math.max(players[1].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
                         return false;
                 return true;
             }
             if(players[0].IX == IX){
                 for(int i =Math.min(players[0].IY,IY)+1;i<Math.max(players[0].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || map[i][IX] instanceof IndestructibleTile)
+                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
                         return false;
                 return true;
             }
             else if(players[0].IY == IY){
                 for(int i =Math.min(players[0].IX,IX)+1;i<Math.max(players[0].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || map[IY][i] instanceof IndestructibleTile)
+                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
                         return false;
                 return true;
             }
@@ -88,7 +99,7 @@ public class EnemyTank extends Tank{
         return true;
     }
     private void Shoot(){
-        //TO DO: shoot a bullet i
+        //TODO: shoot a bullet i
 
     }
     private boolean IsMovePossible(){
@@ -213,14 +224,5 @@ public class EnemyTank extends Tank{
             return Double.POSITIVE_INFINITY;
     }
 
-    private void Strategy(){
-        while(true){
-            if(CanShoot())
-                Shoot();
-            else if(IsMovePossible())
-                Move();
-            else
-                Shoot();
-        }
-    }
+
 }
