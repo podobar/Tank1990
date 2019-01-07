@@ -162,7 +162,7 @@ public class Board {
                     for (int j = 0; j < Map[i].length; j++) {
                         if (!Map[i][j].CanShotThrough)
 //                            Some second version to check collisions with walls, etc.?
-                            if (b.CheckCollision(bulletSize, Map[i][j].getX(), Map[i][j].getY(), TileMeasurement)) {
+                            if (b.CheckCollision(bulletSize, i*TileMeasurement, j*TileMeasurement, TileMeasurement)) {
                                 // TODO: after collision, what happens with tile.
                                 if(Map[i][j].IsDestroyed()) {
                                     Map[i][j] = new PlainTile(i, j);
@@ -368,7 +368,6 @@ public class Board {
                         b.Y += (double) TileMeasurement / 60 * b.getSpeed();
 
                         if (b.getTextureChangeCounter() % TextureChangeTime == 0) {
-                            //Something like ChangeTexture, if earlier tank loaded two of them
                             b.ChangeTexture();
 
                             b.setTextureChangeCounter(0);
@@ -379,7 +378,6 @@ public class Board {
                         b.X -= (double) TileMeasurement / 60 * b.getSpeed();
 
                         if (b.getTextureChangeCounter() % TextureChangeTime == 0) {
-                            //Something like ChangeTexture, if earlier tank loaded two of them
                             b.ChangeTexture();
 
                             b.setTextureChangeCounter(0);
@@ -390,7 +388,6 @@ public class Board {
                         b.X += (double) TileMeasurement / 60 * b.getSpeed();
 
                         if (b.getTextureChangeCounter() % TextureChangeTime == 0) {
-                            //Something like ChangeTexture, if earlier tank loaded two of them
                             b.ChangeTexture();
 
                             b.setTextureChangeCounter(0);
