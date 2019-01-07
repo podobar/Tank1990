@@ -75,7 +75,7 @@ public class Board {
         // Throw exception IndexOutOfBoard?
         return false;
     }
-
+  
     public void AddMovingTile(MovingTile movingTile) {
         if(movingTile instanceof PlayerTank)
             Players.add((PlayerTank)movingTile);
@@ -214,6 +214,7 @@ public class Board {
                         if (pt.Y <= TileLocation.IY) {
                             pt.Y = TileLocation.IY;
                             pt.IsMoving = false;
+
                         }
                         break;
 
@@ -234,6 +235,7 @@ public class Board {
                         break;
 
                     case "LEFT":
+
                         pt.X -= (double) TileMeasurement / 60 * pt.getSpeed();
 
                         if (pt.getTextureChangeCounter() % TextureChangeTime == 0) {
@@ -501,5 +503,6 @@ public class Board {
         }
     }
 }
+
 
 // Tiles sizes? E.g. bullet = Tile/3;
