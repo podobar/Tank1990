@@ -9,6 +9,17 @@ public abstract class Tile
     int IX;
     int IY;
 
+    public int getIX() {
+        return IX;
+    }
+
+    public int getIY() {
+        return IY;
+    }
+
+    public abstract double getX();
+    public abstract double getY();
+
     Image texture;
 }
 

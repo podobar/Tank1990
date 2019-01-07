@@ -1,7 +1,9 @@
 package sample;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,10 +15,12 @@ public class Board {
     private List<PlayerTank> Players;
     private List<EnemyTank> Enemies;
     private Queue<MovingTile> MovingTilesToAdd;
+    private Queue<MovingTile> MovingTilesToDel;
     private Tile[][] Map;
     private int Width;
     private int Height;
     private int TileMeasurement;
+    private Image ExplosionImage;
 
     public int getWidth() {
         return Width;
@@ -30,6 +34,7 @@ public class Board {
         Width = width;
         Height = height;
         TileMeasurement = tileLength;
+        ExplosionImage = new Image(new File("Resources/Explosion1/3.png").toURI().toString());
     }
 
     public Tile getTile(int i, int j) {
@@ -41,6 +46,7 @@ public class Board {
     public void GenerateMap() {
         MovingTiles = new LinkedList<>();   // <MovingTile>
         MovingTilesToAdd = new LinkedList<>(); // Queue
+        MovingTilesToDel = new LinkedList<>();
 
         Map = new Tile[Width][Height];
 
@@ -51,7 +57,6 @@ public class Board {
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
                 Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
-
             }
     }
 
@@ -80,32 +85,84 @@ public class Board {
             Bullets.add((Bullet)movingTile);
     }
 
+    public void DelMovingTile(MovingTile movingTile){
+        if(movingTile instanceof PlayerTank)
+            Players.remove(movingTile);
+        else if(movingTile instanceof EnemyTank)
+            Enemies.remove(movingTile);
+        else if(movingTile instanceof Bullet)
+            Bullets.remove(movingTile);
+    }
+
     // TODO: Bullets isEnemy property - to disable friendly fire within teams
     public void CheckCollisions() {
-        int bulletSize = TileMeasurement / 3;
+        int bulletSize = TileMeasurement / (3 * 2);
         int tankSize = TileMeasurement;
         for (Bullet b : Bullets
         ) {
-            for (PlayerTank pt : Players) {
-                if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize))
-                // TODO: after collision, Explode() is a placeholder.
-                    Explode();
-            }
+
+            if (b.getNoClipTime() <= 0) {
+                for (PlayerTank pt : Players) {
+                    if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
+                        pt.Explode(ExplosionImage);
+                        MovingTilesToDel.offer(b);
+                        //MovingTilesToDel.offer(pt);
+                    }
+                }
+
+                for (EnemyTank et : Enemies) {
+                    if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
+                        // TODO: after collision, Explode() is a placeholder.
+                        et.Explode(ExplosionImage);
+                        MovingTilesToDel.offer(b);
+                        MovingTilesToDel.offer(et);
+                    }
+                }
+
+                for (Bullet b2 : Bullets) {
+                    if (!b.equals(b2) && b.CheckCollision(bulletSize, b2.getX(), b2.getY(), (double) bulletSize)) {
+                        MovingTilesToDel.offer(b);
+                        MovingTilesToDel.offer(b2);
+                    }
+                }
+
+                for (int i = 0; i < Map.length; i++)
+                    for (int j = 0; j < Map[i].length; j++) {
+                        if (!Map[i][j].CanShotThrough)
+//                            Some second version to check collisions with walls, etc.?
+                            if (b.CheckCollision(bulletSize, Map[i][j].getX(), Map[i][j].getY(), TileMeasurement)) {
+                                // TODO: after collision, what happens with tile.
+//                                if(Map[i][j].IsDestroyed()) {
+//                                    Map[i][j] = new PlainTile(i, j);
+//                                }
+
+                                MovingTilesToDel.offer(b);
+                            }
+                    }
+
+            } else
+                b.setNoClipTime(b.getNoClipTime() - 1);
+
+            // With borders
+            if (b.CheckCollision(bulletSize, Width * TileMeasurement, Height * TileMeasurement))
+                MovingTilesToDel.offer(b);
+        }
+        for (MovingTile mt: MovingTilesToDel
+             ) {
+            DelMovingTile(mt);
         }
     }
 
     public void Explode() {
         // Placeholder
+        int i = 13;
     }
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
         CheckCollisions();
-        for (PlayerTank pt : Players)
-        {
+        for (PlayerTank pt : Players) {
             int TextureChangeTime = (int) (15 / pt.getSpeed());
             if (!pt.IsMoving) {
-                // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
-                // Works now but I don't know whether casting is correct usage (looking for some C#-like "as").
                 // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
                 if (input.contains(pt.getControl(0))) {
                     if (IsMovementPossible(pt.IX, pt.IY - 1)) {
@@ -213,81 +270,43 @@ public class Board {
                 }
             }
 
-            // Interfaces IShotable, IMoveable?
-
-                if (!pt.isShooting())     // Not shooting
+            if (!pt.isShooting())     // Not shooting
+            {
+                if (input.contains(pt.getControl(4)))     // Add Controls to Tank?
                 {
-                        if (input.contains(pt.getControl(4)))     // Add Controls to Tank?
-                        {
-                            pt.setShooting(true);
-                            pt.ShotDelay();
-                            int x, y;
-                            if (pt.Direction.equals("UP")) {
-                                x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2*3);
-                                y = (int) pt.Y - TileMeasurement / (2*3); // TileMeasurement/3 - bullet size
-                            } else if (pt.Direction.equals("DOWN")) {
-                                x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2*3);
-                                y = (int) pt.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 - bullet size
-                            } else if (pt.Direction.equals("LEFT")) {
-                                x = (int) pt.X - TileMeasurement / (2*3);
-                                y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2*3); // TileMeasurement/3 - bullet size
-                            } else if (pt.Direction.equals("RIGHT")) {
-                                x = (int) pt.X + TileMeasurement - TileMeasurement / (2*3);
-                                y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2*3); // TileMeasurement/3 - bullet size
-                            } else {      // Exception - Direction different from U,D,L,R
-                                x = 0;
-                                y = 0;
-                            }
-                            MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction));
+                    pt.setShooting(true);
+                    pt.ShotDelay();
+                    int x, y;
+                    if (pt.Direction.equals("UP")) {
+                        x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                    } else if (pt.Direction.equals("DOWN")) {
+                        x = (int) pt.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 = bullet size
+                    } else if (pt.Direction.equals("LEFT")) {
+                        x = (int) pt.X - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                    } else if (pt.Direction.equals("RIGHT")) {
+                        x = (int) pt.X + TileMeasurement - TileMeasurement / (2 * 3);
+                        y = (int) pt.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                    } else {      // Exception - Direction different from U,D,L,R
+                        x = 0;
+                        y = 0;
+                    }
+                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction));
 
-                        }
-                } else { // Shooting
-                    pt.setShooting(pt.ReduceShotDelay());
                 }
+            } else { // Shooting
+                pt.setShooting(pt.ReduceShotDelay());
+            }
+            gc.drawImage(pt.texture, pt.X, pt.Y, TileMeasurement, TileMeasurement);
         }
 
         for (Bullet b : Bullets ) {
             int TextureChangeTime = (int) (15 / b.getSpeed());
-            if (!b.IsMoving) {
-                // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
-                // Works now but I don't know whether casting is correct usage (looking for some C#-like "as").
-                // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
+            if (b.IsMoving) {
 
                 // Bullet should always be moving.
-
-//                if (!(b instanceof PlayerTank) || (input.contains(((PlayerTank) b).getControl(0)))) {
-//                    if (IsMovementPossible(b.IX, b.IY - 1)) {
-//                        b.IY--;
-//                        b.IsMoving = true;
-//                        b.Direction = "UP";
-//                    }
-//
-//                    // Always zero?
-//                    b.texture = b.TextureUp[0];
-//                } else if (b.getClass() != PlayerTank.class || (input.contains(((PlayerTank) b).getControl(1)))) {
-//                    if (IsMovementPossible(b.IX, b.IY + 1)) {
-//                        b.IY++;
-//                        b.IsMoving = true;
-//                        b.Direction = "DOWN";
-//                    }
-//                    b.texture = b.TextureDown[0];
-//                } else if (b.getClass() != PlayerTank.class || (input.contains(((PlayerTank) b).getControl(2)))) {
-//                    if (IsMovementPossible(b.IX - 1, b.IY)) {
-//                        b.IX--;
-//                        b.IsMoving = true;
-//                        b.Direction = "LEFT";
-//                    }
-//                    b.texture = b.TextureLeft[0];
-//
-//                } else if (b.getClass() != PlayerTank.class || (input.contains(((PlayerTank) b).getControl(3)))) {
-//                    if (IsMovementPossible(b.IX + 1, b.IY)) {
-//                        b.IX++;
-//                        b.IsMoving = true;
-//                        b.Direction = "RIGHT";
-//                    }
-//                    b.texture = b.TextureRight[0];
-//                }
-            } else {
                 Tile TileLocation = getTile(b.IX, b.IY);
                 b.setTextureChangeCounter(b.getTextureChangeCounter() + 1);
                 switch (b.Direction) {
@@ -302,7 +321,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     case "DOWN":
@@ -314,7 +332,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     case "LEFT":
@@ -326,7 +343,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     case "RIGHT":
@@ -338,7 +354,6 @@ public class Board {
 
                             b.setTextureChangeCounter(0);
                         }
-
                         break;
 
                     default:
@@ -346,9 +361,7 @@ public class Board {
                 }
             }
 
-            //if (b instanceof Bullet)
             gc.drawImage(b.texture, b.X, b.Y, (int) (TileMeasurement / 3), (int) (TileMeasurement / 3));
-
         }
 
         for (EnemyTank et : Enemies
@@ -358,10 +371,7 @@ public class Board {
             // TODO: Enemies movement
 
             if (!et.IsMoving) {
-                // If it isn't PlayerTank (may be bullet or EnemyTank but then logic isn't right, I think) or input contains move control.
-                // Works now but I don't know whether casting is correct usage (looking for some C#-like "as").
-                // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
-//                if (!(et instanceof PlayerTank) || (input.contains(((PlayerTank) et).getControl(0)))) {
+ //                 if (!(et instanceof PlayerTank) || (input.contains(((PlayerTank) et).getControl(0)))) {
 //                    if (IsMovementPossible(et.IX, et.IY - 1)) {
 //                        et.IY--;
 //                        et.IsMoving = true;

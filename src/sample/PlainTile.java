@@ -16,4 +16,14 @@ public class PlainTile extends Tile{
         CanMoveThrough = true;
         CanShotThrough = true;
     }
+
+    @Override
+    public double getX() {
+        return 0;
+    }
+
+    @Override
+    public double getY() {
+        return 0;
+    }
 }

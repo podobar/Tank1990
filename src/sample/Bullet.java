@@ -5,7 +5,19 @@ import javafx.scene.image.Image;
 import java.io.File;
 
 public class Bullet extends MovingTile {
+    private int noClipTime;
+
+    public int getNoClipTime() {
+        return noClipTime;
+    }
+
+    public void setNoClipTime(int noClipTime) {
+        this.noClipTime = noClipTime;
+    }
+
     public Bullet(int iXStarting, int iYStarting, double x, double y, String direction) {
+
+        noClipTime = 15; // in 1/60 s
 
         IX = iXStarting;    // These two can be used as a destination.
         IY = iYStarting;
@@ -33,6 +45,7 @@ public class Bullet extends MovingTile {
         return Y;
     }
 
+    // Circle with square
     public boolean CheckCollision(double r, double x, double y, int size) {
         double midX = X + r;
         double midY = Y + r;
@@ -41,16 +54,36 @@ public class Bullet extends MovingTile {
             return true;
 
         // From left or right
-        if((x - midX <= r || midX - (x+size) <= r) && (y <= midY || midY >= y + size))
+        if ((Math.abs(x - midX) <= r || Math.abs(midX - (x + size)) <= r) && (y <= midY && midY <= y + size))
             return true;
 
         // From up or down
-        if((y - midY <= r || midY - (y+size) <= r) && (x <= midX || midX >= x + size))
+        if ((Math.abs(y - midY) <= r || Math.abs(midY - (y + size)) <= r) && (x <= midX && midX <= x + size))
             return true;
-
-//        if ((x - midX) * (x - midX) + (y - midY) * (y - midY) < r * r)
-//            return true;
 
         return false;
     }
+
+    // Circle with circle
+    public boolean CheckCollision(double r, double x, double y, double r2) {
+        if (Math.abs(x - X) * Math.abs(x - X) + Math.abs(y - Y) * Math.abs(y - Y) <= (r + r2) * (r + r2))
+            return true;
+        return false;
+    }
+
+    // With border
+    public boolean CheckCollision(double r, int borderX, int borderY) {
+        double midX = X + r;
+        double midY = Y + r;
+
+//        if (midX * midX + midY * midY <= r * r ||
+//            Math.abs(midX - borderX) * Math.abs(midX - borderX) + midY * midY <= r * r ||
+//            midX * midX + Math.abs(midY - borderY) * Math.abs(midY - borderY) < r * r ||
+//            Math.abs(midX - borderX) * Math.abs(midX - borderX) + Math.abs(midY - borderY) * Math.abs(midY - borderY) < r * r)
+        if(midX <= r || midX >= borderX - r || midY <= r || midY >= borderY - r)
+            return true;
+
+        return false;
+    }
+
 }
