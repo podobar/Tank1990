@@ -1,7 +1,9 @@
 package sample;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,10 +15,12 @@ public class Board {
     private List<PlayerTank> Players;
     private List<EnemyTank> Enemies;
     private Queue<MovingTile> MovingTilesToAdd;
+    private Queue<MovingTile> MovingTilesToDel;
     private Tile[][] Map;
     private int Width;
     private int Height;
     private int TileMeasurement;
+    private Image ExplosionImage;
 
     public int getWidth() {
         return Width;
@@ -30,6 +34,7 @@ public class Board {
         Width = width;
         Height = height;
         TileMeasurement = tileLength;
+        ExplosionImage = new Image(new File("Resources/Explosion1/3.png").toURI().toString());
     }
 
     public Tile getTile(int i, int j) {
@@ -41,6 +46,7 @@ public class Board {
     public void GenerateMap() {
         MovingTiles = new LinkedList<>();   // <MovingTile>
         MovingTilesToAdd = new LinkedList<>(); // Queue
+        MovingTilesToDel = new LinkedList<>();
 
         Map = new Tile[Width][Height];
 
@@ -79,6 +85,15 @@ public class Board {
             Bullets.add((Bullet)movingTile);
     }
 
+    public void DelMovingTile(MovingTile movingTile){
+        if(movingTile instanceof PlayerTank)
+            Players.remove(movingTile);
+        else if(movingTile instanceof EnemyTank)
+            Enemies.remove(movingTile);
+        else if(movingTile instanceof Bullet)
+            Bullets.remove(movingTile);
+    }
+
     // TODO: Bullets isEnemy property - to disable friendly fire within teams
     public void CheckCollisions() {
         int bulletSize = TileMeasurement / (3 * 2);
@@ -86,14 +101,55 @@ public class Board {
         for (Bullet b : Bullets
         ) {
 
-            if (b.getNoClipTime() <= 0)
+            if (b.getNoClipTime() <= 0) {
                 for (PlayerTank pt : Players) {
-                    if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize))
-                        // TODO: after collision, Explode() is a placeholder.
-                        Explode();
+                    if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
+                        pt.Explode(ExplosionImage);
+                        MovingTilesToDel.offer(b);
+                        //MovingTilesToDel.offer(pt);
+                    }
                 }
-            else
+
+                for (EnemyTank et : Enemies) {
+                    if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
+                        // TODO: after collision, Explode() is a placeholder.
+                        et.Explode(ExplosionImage);
+                        MovingTilesToDel.offer(b);
+                        MovingTilesToDel.offer(et);
+                    }
+                }
+
+                for (Bullet b2 : Bullets) {
+                    if (!b.equals(b2) && b.CheckCollision(bulletSize, b2.getX(), b2.getY(), (double) bulletSize)) {
+                        MovingTilesToDel.offer(b);
+                        MovingTilesToDel.offer(b2);
+                    }
+                }
+
+                for (int i = 0; i < Map.length; i++)
+                    for (int j = 0; j < Map[i].length; j++) {
+                        if (!Map[i][j].CanShotThrough)
+//                            Some second version to check collisions with walls, etc.?
+                            if (b.CheckCollision(bulletSize, Map[i][j].getX(), Map[i][j].getY(), TileMeasurement)) {
+                                // TODO: after collision, what happens with tile.
+//                                if(Map[i][j].IsDestroyed()) {
+//                                    Map[i][j] = new PlainTile(i, j);
+//                                }
+
+                                MovingTilesToDel.offer(b);
+                            }
+                    }
+
+            } else
                 b.setNoClipTime(b.getNoClipTime() - 1);
+
+            // With borders
+            if (b.CheckCollision(bulletSize, Width * TileMeasurement, Height * TileMeasurement))
+                MovingTilesToDel.offer(b);
+        }
+        for (MovingTile mt: MovingTilesToDel
+             ) {
+            DelMovingTile(mt);
         }
     }
 
