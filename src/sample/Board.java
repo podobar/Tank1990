@@ -75,7 +75,7 @@ public class Board {
         // Throw exception IndexOutOfBoard?
         return false;
     }
-
+  
     public void AddMovingTile(MovingTile movingTile) {
         if(movingTile instanceof PlayerTank)
             Players.add((PlayerTank)movingTile);
