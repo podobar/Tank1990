@@ -72,5 +72,9 @@ abstract public class Tank extends MovingTile {
             return false;
         return true;
     }
-}
 
+    public void Explode(Image ExplosionImage){
+        texture = ExplosionImage;
+        //IsMoving = false;
+    }
+}

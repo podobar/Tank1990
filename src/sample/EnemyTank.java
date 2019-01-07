@@ -223,6 +223,4 @@ public class EnemyTank extends Tank{
         else
             return Double.POSITIVE_INFINITY;
     }
-
-
 }

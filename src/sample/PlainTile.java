@@ -3,8 +3,7 @@ package sample;
 import javafx.scene.image.Image;
 
 public class PlainTile extends Tile{
-
-
+  
     Image[] StagesOfTile;
 
     public PlainTile(int x, int y, Image[] stagesOfTile, boolean canShotThrough, boolean canBeDestroyed, int shield) {
@@ -37,5 +36,15 @@ public class PlainTile extends Tile{
         // Add texture initialization
         CanMoveThrough = true;
         CanShotThrough = true;
+    }
+
+    @Override
+    public double getX() {
+        return 0;
+    }
+
+    @Override
+    public double getY() {
+        return 0;
     }
 }

@@ -29,6 +29,16 @@ public abstract class MovingTile extends Tile
         this.TextureChangeCounter = TextureChangeCounter;
     }
 
+    @Override
+    public double getX() {
+        return X;
+    }
+
+    @Override
+    public double getY() {
+        return Y;
+    }
+
     public void ChangeTexture(){
         switch (Direction){
             case "UP":
