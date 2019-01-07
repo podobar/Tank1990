@@ -8,9 +8,7 @@ public abstract class MovingTile extends Tile
     protected double X;
     protected double Y;
     protected String Direction;
-
     protected double speed; // 1 means that tank (object) moves about 1 tile per second
-
 
     protected int TextureChangeCounter; // To think about
 
@@ -29,6 +27,16 @@ public abstract class MovingTile extends Tile
 
     public void setTextureChangeCounter(int TextureChangeCounter) {
         this.TextureChangeCounter = TextureChangeCounter;
+    }
+
+    @Override
+    public double getX() {
+        return X;
+    }
+
+    @Override
+    public double getY() {
+        return Y;
     }
 
     public void ChangeTexture(){

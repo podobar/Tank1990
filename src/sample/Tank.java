@@ -9,7 +9,6 @@ abstract public class Tank extends MovingTile {
     private int level; //
     private int ammoType;
     //private double speed; // 1 means that tank moves 1 tile per second // Moved to MovingTile class
-
     private double attackSpeed; // bullets per second?
 //    /*private*/ Image texture; // depends on level of tank // Moved to Tile class
     private int upgrades; // flags for each upgrade [4 youngest bits]
@@ -73,5 +72,9 @@ abstract public class Tank extends MovingTile {
             return false;
         return true;
     }
-}
 
+    public void Explode(Image ExplosionImage){
+        texture = ExplosionImage;
+        //IsMoving = false;
+    }
+}
