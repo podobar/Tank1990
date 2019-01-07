@@ -5,11 +5,13 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import java.util.Queue;
 
 public class Board {
     private List<MovingTile> MovingTiles;   // Tanks, enemies and bullets
     private Queue<MovingTile> MovingTilesToAdd;
+
     private Tile[][] Map;
     private int Width;
     private int Height;
@@ -35,6 +37,7 @@ public class Board {
 
     // Add checking whether some MovingTile isn't on Tile (collisions)
 
+
     public void GenerateMap() {
         MovingTiles = new LinkedList<>();   // <MovingTile>
         MovingTilesToAdd = new LinkedList<>(); // Queue
@@ -43,6 +46,7 @@ public class Board {
 
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
+
                 Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
 
             }
@@ -60,9 +64,11 @@ public class Board {
 
             return Map[i][j].CanMoveThrough;
         }
+
         // Throw exception IndexOutOfBoard?
         return false;
     }
+
 
     public void AddMovingTile(MovingTile movingTile) {
         MovingTiles.add(movingTile);
@@ -235,3 +241,4 @@ public class Board {
 }
 
 // Tiles sizes? E.g. bullet = Tile/3;
+
