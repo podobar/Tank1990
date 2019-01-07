@@ -113,7 +113,7 @@ public class Board {
 
                 for (EnemyTank et : Enemies) {
                     if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
-                        // TODO: after collision, Explode() is a placeholder.
+                        // TODO: after collision, some score update.
                         et.Explode(ExplosionImage);
                         MovingTilesToDel.offer(b);
                         MovingTilesToDel.offer(et);
@@ -372,38 +372,6 @@ public class Board {
             // TODO: Enemies movement
 
             if (!et.IsMoving) {
- //                 if (!(et instanceof PlayerTank) || (input.contains(((PlayerTank) et).getControl(0)))) {
-//                    if (IsMovementPossible(et.IX, et.IY - 1)) {
-//                        et.IY--;
-//                        et.IsMoving = true;
-//                        et.Direction = "UP";
-//                    }
-//
-//                    // Always zero?
-//                    et.texture = et.TextureUp[0];
-//                } else if (et.getClass() != PlayerTank.class || (input.contains(((PlayerTank) et).getControl(1)))) {
-//                    if (IsMovementPossible(et.IX, et.IY + 1)) {
-//                        et.IY++;
-//                        et.IsMoving = true;
-//                        et.Direction = "DOWN";
-//                    }
-//                    et.texture = et.TextureDown[0];
-//                } else if (et.getClass() != PlayerTank.class || (input.contains(((PlayerTank) et).getControl(2)))) {
-//                    if (IsMovementPossible(et.IX - 1, et.IY)) {
-//                        et.IX--;
-//                        et.IsMoving = true;
-//                        et.Direction = "LEFT";
-//                    }
-//                    et.texture = et.TextureLeft[0];
-//
-//                } else if (et.getClass() != PlayerTank.class || (input.contains(((PlayerTank) et).getControl(3)))) {
-//                    if (IsMovementPossible(et.IX + 1, et.IY)) {
-//                        et.IX++;
-//                        et.IsMoving = true;
-//                        et.Direction = "RIGHT";
-//                    }
-//                    et.texture = et.TextureRight[0];
-//                }
             } else {
                 Tile TileLocation = getTile(et.IX, et.IY);
                 et.setTextureChangeCounter(et.getTextureChangeCounter() + 1);
