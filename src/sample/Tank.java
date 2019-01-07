@@ -29,7 +29,7 @@ abstract public class Tank extends MovingTile {
         X = x;
         Y = y;
 
-        this.texture = texturesRight[0];
+        this.texture = texturesUp[0];
 
         TextureUp = texturesUp.clone();
         TextureDown = texturesDown.clone();
@@ -43,7 +43,7 @@ abstract public class Tank extends MovingTile {
 
         TextureChangeCounter = 0;
 
-        Direction = "RIGHT";
+        Direction = "UP";
 
         CanMoveThrough = false;
         CanShotThrough = false;

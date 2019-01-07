@@ -4,10 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Board {
     private List<MovingTile> MovingTiles;   // Tanks, enemies and bullets
@@ -16,7 +13,7 @@ public class Board {
     private List<EnemyTank> Enemies;
     private Queue<MovingTile> MovingTilesToAdd;
     private Queue<MovingTile> MovingTilesToDel;
-    private Tile[][] Map;
+    private MapTile[][] Map;
     private int Width;
     private int Height;
     private int TileMeasurement;
@@ -48,7 +45,7 @@ public class Board {
         MovingTilesToAdd = new LinkedList<>(); // Queue
         MovingTilesToDel = new LinkedList<>();
 
-        Map = new Tile[Width][Height];
+        Map = new MapTile[Width][Height];
 
         Bullets = new LinkedList<>();
         Players = new LinkedList<>();
@@ -56,7 +53,40 @@ public class Board {
 
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
-                Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
+
+                if (i == Width / 2 && j == Height - 2) {
+                    //Eagle
+                    Map[i][j] = new PlainTile(
+                            i * TileMeasurement, j * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Eagle/eagle.jpg").toURI().toString())},
+                            false,
+                            true,
+                            1
+                    );
+                } else if (((i == Width / 2 - 1 || i == Width / 2 || i == Width / 2 + 1) && j == Height - 3)
+                        || ((i == Width / 2 - 1 || i == Width / 2 + 1) && j == Height - 2)) {
+                    //Bricks around the eagle
+                    Map[i][j] = new PlainTile(
+                            i * TileMeasurement, j * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                            false,
+                            true,
+                            3
+                    );
+                } else if (i == 0 || i == Map.length - 1 || j == 0 || j == Map[i].length - 1)
+                    Map[i][j] = new PlainTile(
+                            i * TileMeasurement, j * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                            false,
+                            true,
+                            3
+                    );
+                else
+                    Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
             }
     }
 
@@ -105,6 +135,7 @@ public class Board {
             if (b.getNoClipTime() <= 0) {
                 for (PlayerTank pt : Players) {
                     if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
+                        // TODO: reacting correctly to being shot
                         pt.Explode(ExplosionImage);
                         MovingTilesToDel.offer(b);
                         //MovingTilesToDel.offer(pt);
@@ -133,9 +164,9 @@ public class Board {
 //                            Some second version to check collisions with walls, etc.?
                             if (b.CheckCollision(bulletSize, Map[i][j].getX(), Map[i][j].getY(), TileMeasurement)) {
                                 // TODO: after collision, what happens with tile.
-//                                if(Map[i][j].IsDestroyed()) {
-//                                    Map[i][j] = new PlainTile(i, j);
-//                                }
+                                if(Map[i][j].IsDestroyed()) {
+                                    Map[i][j] = new PlainTile(i, j);
+                                }
 
                                 MovingTilesToDel.offer(b);
                             }
@@ -161,40 +192,49 @@ public class Board {
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
         CheckCollisions();
+        for(int i = 0; i < Map.length; i++)
+            for(int j = 0; j < Map[i].length; j++) {
+                Tile t = Map[i][j];
+                if (t.texture != null)
+                    gc.drawImage(t.texture, i * TileMeasurement, j * TileMeasurement, TileMeasurement, TileMeasurement);
+            }
         for (PlayerTank pt : Players) {
             int TextureChangeTime = (int) (15 / pt.getSpeed());
             if (!pt.IsMoving) {
                 // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
                 if (input.contains(pt.getControl(0))) {
+
                     if (IsMovementPossible(pt.IX, pt.IY - 1)) {
                         pt.IY--;
                         pt.IsMoving = true;
-                        pt.Direction = "UP";
-                    }
+                        }
 
-                    // Always zero?
+                    pt.Direction = "UP";
                     pt.texture = pt.TextureUp[0];
                 } else if (input.contains(pt.getControl(1))) {
                     if (IsMovementPossible(pt.IX, pt.IY + 1)) {
                         pt.IY++;
                         pt.IsMoving = true;
-                        pt.Direction = "DOWN";
                     }
+
+                    pt.Direction = "DOWN";
                     pt.texture = pt.TextureDown[0];
                 } else if (input.contains(pt.getControl(2))) {
                     if (IsMovementPossible(pt.IX - 1, pt.IY)) {
                         pt.IX--;
                         pt.IsMoving = true;
-                        pt.Direction = "LEFT";
                     }
+
+                    pt.Direction = "LEFT";
                     pt.texture = pt.TextureLeft[0];
 
                 } else if (input.contains(pt.getControl(3))) {
                     if (IsMovementPossible(pt.IX + 1, pt.IY)) {
                         pt.IX++;
                         pt.IsMoving = true;
-                        pt.Direction = "RIGHT";
                     }
+
+                    pt.Direction = "RIGHT";
                     pt.texture = pt.TextureRight[0];
                 }
             } else {

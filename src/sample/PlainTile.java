@@ -2,7 +2,7 @@ package sample;
 
 import javafx.scene.image.Image;
 
-public class PlainTile extends Tile{
+public class PlainTile extends MapTile{
   
     Image[] StagesOfTile;
 
@@ -15,7 +15,9 @@ public class PlainTile extends Tile{
         CanShotThrough = canShotThrough;
         CanBeDestroyed = canBeDestroyed;
         stamina=shield;
+        texture = StagesOfTile[0];
     }
+    @Override
     public boolean IsDestroyed(){
         if(stamina>1){
             --stamina;
