@@ -23,30 +23,7 @@ public class GameViewController {
     HBox enemyBox;
     @FXML
     Canvas canvas;
-    ArrayList<String> input = new ArrayList<>();
-    public void keyPressed(KeyEvent keyEvent){
-        String code = keyEvent.getCode().toString();
-        if (!input.contains(code)) {
-            input.add(code);
-
-            if (code == "UP" && input.contains("DOWN"))
-                input.remove("DOWN");
-
-            else if (code == "DOWN" && input.contains("UP"))
-                input.remove("UP");
-
-            else if (code == "LEFT" && input.contains("RIGHT"))
-                input.remove("RIGHT");
-
-            else if (code == "RIGHT" && input.contains("LEFT"))
-                input.remove("LEFT");
-        }
-    }
-    public void keyReleased(KeyEvent keyEvent){
-        String code = keyEvent.getCode().toString();
-        if (input.contains(code))
-            input.remove(code);
-    }
+    public static AnimationTimer timer;
     public void initialize()
     {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -100,10 +77,37 @@ public class GameViewController {
         Image BlueRight2Image = new Image(TankImageFile.toURI().toString());
         int n = 16;
         int TileMeasurement = (int) canvas.getHeight() / n;
-        Board BattleField = new Board(n, n, TileMeasurement);
+
+        Board BattleField = new Board((int)canvas.getWidth()/TileMeasurement, n, TileMeasurement);
 
         BattleField.GenerateMap();
-
+        for(int i=0;i<2;++i)
+        {
+            for(int j=0;j<3;++j){
+                if(i==1 && (j==1)){
+                    //Eagle
+                    PlainTile pt = new PlainTile(
+                            BattleField.getWidth()/2,BattleField.getHeight()-1,
+                            new Image[]{new Image(new File("Resources/Eagle/eagle.jpg").toURI().toString())},
+                            false,
+                            true,
+                            1
+                            );
+                }
+                else{
+                    //Bricks around the eagle
+                    PlainTile pt = new PlainTile(
+                            BattleField.getWidth()/2-1+j,BattleField.getHeight()-2+i,
+                            new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                            false,
+                            true,
+                            3
+                    );
+                }
+            }
+        }
         Tank tank = new PlayerTank(
                 0, 0,
                 BattleField.getTile(0, 0).IX, BattleField.getTile(0, 0).IY,
@@ -127,34 +131,13 @@ public class GameViewController {
         BattleField.AddMovingTile(tank);
         BattleField.AddMovingTile(tank2);
 
-        final long startNanoTime = System.nanoTime();
-
-        ArrayList<String> input = new ArrayList<>();
-
-        AnimationTimer timer  =new AnimationTimer() {
-            long lastUpdate = 0;
-            @Override
-            public void handle(long currentNanoTime) {
-                if(currentNanoTime-lastUpdate >=200_000_000)
-                {
-                    double t = (currentNanoTime - startNanoTime) / 1000000000.0;
-
-                    double x = 232 + 128 * Math.cos(t);
-                    double y = 232 + 128 * Math.sin(t);
-
-                    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-                    gc.setGlobalAlpha(0.75);
-                    gc.fillText("Привет, товарищ!", x, y);
-                    gc.strokeText("Привет, товарищ!", x, y);
-
-                    gc.setGlobalAlpha(1);
-                    lastUpdate =currentNanoTime;
-                    BattleField.UpdateBoard(input, gc);
-                }
+        timer =
+            new AnimationTimer() {
+            public void handle(long now) {
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                BattleField.UpdateBoard(Main.input, gc);
             }
         };
-        timer.start();
     }
 
 
