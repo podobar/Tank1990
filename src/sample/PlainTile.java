@@ -20,7 +20,6 @@ public class PlainTile extends MapTile {
 
     @Override
     public boolean IsDestroyed() {
-        // TODO: Wanna talk about it (stamina).
         if (stamina > 1) {
             --stamina;
             texture = StagesOfTile[stamina - 1];

@@ -7,6 +7,7 @@ import javafx.util.Pair;
 import java.io.File;
 import java.util.*;
 
+
 public class Board {
     private List<MovingTile> MovingTiles;   // Tanks, enemies and bullets
     private List<Bullet> Bullets;
@@ -15,7 +16,7 @@ public class Board {
     private Queue<MovingTile> MovingTilesToAdd;
     private Queue<MovingTile> MovingTilesToDel;
     private Queue<AbstractMap.SimpleEntry<Tank, Integer>> ExplodingTanks;
-    private MapTile[][] Map;
+    public static MapTile[][] Map;
     private int Width;
     private int Height;
     private int TileMeasurement;
@@ -94,6 +95,20 @@ public class Board {
                 else
                     Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
             }
+        EnemyTank testEnemy =
+                new EnemyTank(1,1,
+                            TileMeasurement,TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
+                                        new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),
+                                        new Image(new File("Resources/Tanks/Green/down2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
+                                        new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
+                                        new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
+                            );
+        Enemies.add(testEnemy);
+        //Eventually enemies on map will be limited to max 6,
     }
 
 
@@ -106,13 +121,12 @@ public class Board {
                     return false;
             }
 
-//            // TODO: Are explosions passable?
-//            for (AbstractMap.SimpleEntry<Tank, Integer> explodingTank : ExplodingTanks
-//            ) {
-//                Tank tank = explodingTank.getKey();
-//                if (tank.IX == i && tank.IY == j && !tank.CanMoveThrough)
-//                    return false;
-//            }
+            for (AbstractMap.SimpleEntry<Tank, Integer> explodingTank : ExplodingTanks
+            ) {
+                Tank tank = explodingTank.getKey();
+                if (tank.IX == i && tank.IY == j && !tank.CanMoveThrough)
+                    return false;
+            }
 
             for(PlayerTank pt: Players){
                 if (pt.IX == i && pt.IY == j && !pt.CanMoveThrough)
@@ -171,6 +185,7 @@ public class Board {
                 }
 
                 for (EnemyTank et : Enemies) {
+                    //TODO:  Tank ID
                     if (b.getOwnerId() != 0)
                         if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
                             // TODO: after collision, some score update.
