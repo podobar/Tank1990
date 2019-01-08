@@ -149,7 +149,6 @@ public class Board {
             Bullets.remove(movingTile);
     }
 
-    // TODO: Bullets isEnemy property - to disable friendly fire within teams
     public void CheckCollisions() {
         int bulletSize = TileMeasurement / (3 * 2);
         int tankSize = TileMeasurement;
@@ -163,7 +162,7 @@ public class Board {
 //                    // TODO: Change 1 and 2 to some (global) variables?
 //                    if (b.getOwnerId() != 1 && b.getOwnerId() != 2)
                         if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
-                            // TODO: reacting correctly to being shot (e.g. updating hp)
+                            // TODO: reacting correctly to being shot (e.g. updating hp), it's something to talk about
                             pt.Explode(ExplosionImage);
                             MovingTilesToDel.offer(b);
                             ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
