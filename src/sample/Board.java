@@ -165,7 +165,7 @@ public class Board {
                             if (b.CheckCollision(bulletSize, i*TileMeasurement, j*TileMeasurement, TileMeasurement)) {
                                 // TODO: after collision, what happens with tile.
                                 if(Map[i][j].IsDestroyed()) {
-                                    Map[i][j] = new PlainTile(i, j);
+                                    Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
                                 }
 
                                 MovingTilesToDel.offer(b);

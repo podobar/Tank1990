@@ -17,7 +17,8 @@ public class Bullet extends MovingTile {
 
     public Bullet(int iXStarting, int iYStarting, double x, double y, String direction) {
 
-        noClipTime = 2; // in 1/60 s
+        // TODO: tank moving down usually shoots himself - bullet owner field should fix it
+        noClipTime = 3; // in 1/60 s
 
         IX = iXStarting;    // These two can be used as a destination.
         IY = iYStarting;
