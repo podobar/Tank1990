@@ -8,32 +8,34 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class EnemyTank extends Tank{
-    //Enemy tanks (AI) knows where players and eagle are.
-    //AI tries to either destroy eagle, or kill players when it's possible
-
-    PlayerTank[] players;
-    Tile eagle;
+    //Enemy tanks (AI) knows where Main.players and eagle are.
+    //AI tries to either destroy eagle, or kill Main.players when it's possible
+    //TODO: change w,h into board.Width, board.Height -> avoid hardcoding
+    int w =25;
+    int h =16;
+    Tile eagle = new PlainTile(12,14);
     //int Board.MapHeight,Board.MapWidth;
     int shotDelay;
-    Stack<Point> path;
-    String Direction;
+    private Stack<Point> path;
+    //Direction is already here, deleted.
 
     public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight) {
         super(iX, iY, x, y, texturesUp, texturesDown, texturesLeft, texturesRight);
     }
 
-    private void MakeMove(){
-        while(true){
-            if(CanShootToObjective())
-                Main.input.add("SHOOT");
-            else {
-                Move();
-                if(!IsMovePossible(path.pop()))//When we want to move into destructible terrain
-                    Main.input.add("SHOOT");
-                else
-                    Main.input.add(Direction); //??
-            }
-        }
+    public boolean MakeMove(){
+//        boolean shouldShoot=false;
+//        if(CanShootToObjective())
+//            shouldShoot=true;
+//        else {
+//            Move();
+//            if(!IsMovePossible(path.pop()))//When we want to move into destructible terrain
+//                Main.input.add("SHOOT");
+//            else
+//                Main.input.add(Direction); //??
+//        }
+//        return shouldShoot;
+        return CanShootToObjective();
     }
     private boolean CanShootToObjective(){
         //TODO: Check - maybe you also have to decide in which direction shoot
@@ -65,66 +67,66 @@ public class EnemyTank extends Tank{
         }
         //If closest player is in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
         //If there is another player (not closest one) in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
-        if(Math.sqrt(Math.pow(IX-players[0].IX,2) + Math.pow(IY-players[0].IY,2))<= Math.sqrt(Math.pow(IX-players[1].IX,2) + Math.pow(IY-players[1].IY,2))){
+        if(Math.sqrt(Math.pow(IX-Main.players[0].IX,2) + Math.pow(IY-Main.players[0].IY,2))<= Math.sqrt(Math.pow(IX-Main.players[1].IX,2) + Math.pow(IY-Main.players[1].IY,2))){
             //Distance from P1 is smaller than from P2
-            if(players[0].IX == IX){
-                if(players[0].IY < IY){ //player lower than enemy
-                    for(int i = IY-1;i>players[0].IY;--i)
+            if(Main.players[0].IX == IX){
+                if(Main.players[0].IY < IY){ //player lower than enemy
+                    for(int i = IY-1;i>Main.players[0].IY;--i)
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-                    for(int i = IY+1; i< players[0].IY;++i )
+                    for(int i = IY+1; i< Main.players[0].IY;++i )
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="UP";
                     return true;
                 }
             }
-            else if(players[0].IY == IY){
-                if(players[0].IX < IX){ //player is on the left of the enemy
-                    for(int i = IX-1;i>players[0].IX;--i)
+            else if(Main.players[0].IY == IY){
+                if(Main.players[0].IX < IX){ //player is on the left of the enemy
+                    for(int i = IX-1;i>Main.players[0].IX;--i)
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-                    for(int i = IX+1; i< players[0].IX;++i )
+                    for(int i = IX+1; i< Main.players[0].IX;++i )
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="RIGHT";
                     return true;
                 }
             }
-            if(players[1].IX == IX){
-                if(players[1].IY < IY){ //player lower than enemy
-                    for(int i = IY-1;i>players[1].IY;--i)
+            if(Main.players[1].IX == IX){
+                if(Main.players[1].IY < IY){ //player lower than enemy
+                    for(int i = IY-1;i>Main.players[1].IY;--i)
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-                    for(int i = IY+1; i< players[1].IY;++i )
+                    for(int i = IY+1; i< Main.players[1].IY;++i )
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="UP";
                     return true;
                 }
             }
-            else if(players[1].IY == IY){
-                if(players[1].IX < IX){ //player is on the left of the enemy
-                    for(int i = IX-1;i>players[1].IX;--i)
+            else if(Main.players[1].IY == IY){
+                if(Main.players[1].IX < IX){ //player is on the left of the enemy
+                    for(int i = IX-1;i>Main.players[1].IX;--i)
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-                    for(int i = IX+1; i< players[1].IX;++i )
+                    for(int i = IX+1; i< Main.players[1].IX;++i )
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="RIGHT";
@@ -134,64 +136,64 @@ public class EnemyTank extends Tank{
         }
         else //Distance from P1 is higher than from P2
         {
-            if(players[1].IX == IX){
-                if(players[1].IY < IY){ //player lower than enemy
-                    for(int i = IY-1;i>players[1].IY;--i)
+            if(Main.players[1].IX == IX){
+                if(Main.players[1].IY < IY){ //player lower than enemy
+                    for(int i = IY-1;i>Main.players[1].IY;--i)
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-                    for(int i = IY+1; i< players[1].IY;++i )
+                    for(int i = IY+1; i< Main.players[1].IY;++i )
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="UP";
                     return true;
                 }
             }
-            else if(players[1].IY == IY){
-                if(players[1].IX < IX){ //player is on the left of the enemy
-                    for(int i = IX-1;i>players[1].IX;--i)
+            else if(Main.players[1].IY == IY){
+                if(Main.players[1].IX < IX){ //player is on the left of the enemy
+                    for(int i = IX-1;i>Main.players[1].IX;--i)
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-                    for(int i = IX+1; i< players[1].IX;++i )
+                    for(int i = IX+1; i< Main.players[1].IX;++i )
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="RIGHT";
                     return true;
                 }
             }
-            if(players[0].IX == IX){
-                if(players[0].IY < IY){ //player lower than enemy
-                    for(int i = IY-1;i>players[0].IY;--i)
+            if(Main.players[0].IX == IX){
+                if(Main.players[0].IY < IY){ //player lower than enemy
+                    for(int i = IY-1;i>Main.players[0].IY;--i)
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-                    for(int i = IY+1; i< players[0].IY;++i )
+                    for(int i = IY+1; i< Main.players[0].IY;++i )
                         if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
                             return false;
                     Direction="UP";
                     return true;
                 }
             }
-            else if(players[0].IY == IY){
-                if(players[0].IX < IX){ //player is on the left of the enemy
-                    for(int i = IX-1;i>players[0].IX;--i)
+            else if(Main.players[0].IY == IY){
+                if(Main.players[0].IX < IX){ //player is on the left of the enemy
+                    for(int i = IX-1;i>Main.players[0].IX;--i)
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-                    for(int i = IX+1; i< players[0].IX;++i )
+                    for(int i = IX+1; i< Main.players[0].IX;++i )
                         if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
                             return false;
                     Direction="RIGHT";
@@ -215,7 +217,7 @@ public class EnemyTank extends Tank{
         //TODO: Own implementation of A* algorithm to move through the Board.Map
         //What we wave on start:
         // -IX, IY - tile coordinates,
-        // -We know where the eagle and players are,
+        // -We know where the eagle and Main.players are,
         // -We have a Board.Map of Tiles (game Board.Map)
         // -We can only move up, down, left or right
 
@@ -224,9 +226,9 @@ public class EnemyTank extends Tank{
         // -Destructible tiles have weight which depends on delay between shots multiplied by their stamina (terrain can take certain amount of damage)
         // -Normal tiles have weight = 1
 
-        Double[][] estimations = new Double[Board.MapHeight][Board.MapWidth];
-        Double[][] distance = new Double[Board.MapHeight][Board.MapWidth];
-        Point[][] previous = new Point[Board.MapHeight][Board.MapWidth];
+        Double[][] estimations = new Double[w][h];
+        Double[][] distance = new Double[w][h];
+        Point[][] previous = new Point[w][h];
         for (Tile[] row: Board.Map) {
             for(Tile t: row){
                 estimations[t.IY][t.IX] = Math.sqrt(Math.pow(t.IY-eagle.IY,2) + Math.pow(t.IX-eagle.IX,2)); //Euclidean distance as approx. heurestic

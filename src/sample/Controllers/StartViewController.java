@@ -4,13 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import sample.GameViewController;
 import sample.Main;
-import sample.PlayerTank;
-import sample.Tank;
-
-import java.io.File;
-
 
 
 public class StartViewController {

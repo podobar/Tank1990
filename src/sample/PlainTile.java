@@ -2,7 +2,7 @@ package sample;
 
 import javafx.scene.image.Image;
 
-public class PlainTile extends MapTile {
+public class PlainTile extends Tile {
 
     Image[] StagesOfTile;
 
@@ -20,12 +20,17 @@ public class PlainTile extends MapTile {
 
     @Override
     public boolean IsDestroyed() {
-        if (stamina > 1) {
-            --stamina;
-            texture = StagesOfTile[stamina - 1];
+        if(CanBeDestroyed){
+            if (stamina > 1) {
+                --stamina;
+                texture = StagesOfTile[stamina - 1];
+                return false;
+            } else
+                return true;
+        }
+        else
             return false;
-        } else
-            return true;
+
     }
 
     public PlainTile(int x, int y) {

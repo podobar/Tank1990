@@ -47,6 +47,7 @@ abstract public class Tank extends MovingTile {
 
         CanMoveThrough = false;
         CanShotThrough = false;
+        CanBeDestroyed = true;
 
 
         IsMoving = false;
