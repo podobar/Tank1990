@@ -6,6 +6,7 @@ import java.io.File;
 
 public class Bullet extends MovingTile {
     private int noClipTime;
+    private int ownerId;    // 1 - player 1, 2 - player 2, 0 - enemy ?
 
     public int getNoClipTime() {
         return noClipTime;
@@ -15,10 +16,15 @@ public class Bullet extends MovingTile {
         this.noClipTime = noClipTime;
     }
 
-    public Bullet(int iXStarting, int iYStarting, double x, double y, String direction) {
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public Bullet(int iXStarting, int iYStarting, double x, double y, String direction, int _ownerId) {
 
         // TODO: tank moving down usually shoots himself - bullet owner field should fix it
         noClipTime = 3; // in 1/60 s
+        ownerId = _ownerId;
 
         IX = iXStarting;    // These two can be used as a destination.
         IY = iYStarting;

@@ -2,6 +2,7 @@ package sample;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.util.*;
@@ -13,10 +14,12 @@ public class Board {
     private List<EnemyTank> Enemies;
     private Queue<MovingTile> MovingTilesToAdd;
     private Queue<MovingTile> MovingTilesToDel;
+    private Queue<AbstractMap.SimpleEntry<Tank, Integer>> ExplodingTanks;
     private MapTile[][] Map;
     private int Width;
     private int Height;
     private int TileMeasurement;
+    private int ExplosionTime;
     private Image ExplosionImage;
 
     public int getWidth() {
@@ -32,6 +35,8 @@ public class Board {
         Height = height;
         TileMeasurement = tileLength;
         ExplosionImage = new Image(new File("Resources/Explosion1/3.png").toURI().toString());
+        // TODO: to think about how long does explosion stay
+        ExplosionTime = 60;
     }
 
     public Tile getTile(int i, int j) {
@@ -44,6 +49,7 @@ public class Board {
         MovingTiles = new LinkedList<>();   // <MovingTile>
         MovingTilesToAdd = new LinkedList<>(); // Queue
         MovingTilesToDel = new LinkedList<>();
+        ExplodingTanks = new LinkedList<>();
 
         Map = new MapTile[Width][Height];
 
@@ -100,6 +106,24 @@ public class Board {
                     return false;
             }
 
+//            // TODO: Are explosions passable?
+//            for (AbstractMap.SimpleEntry<Tank, Integer> explodingTank : ExplodingTanks
+//            ) {
+//                Tank tank = explodingTank.getKey();
+//                if (tank.IX == i && tank.IY == j && !tank.CanMoveThrough)
+//                    return false;
+//            }
+
+            for(PlayerTank pt: Players){
+                if (pt.IX == i && pt.IY == j && !pt.CanMoveThrough)
+                    return false;
+            }
+
+            for(EnemyTank et: Enemies){
+                if (et.IX == i && et.IY == j && !et.CanMoveThrough)
+                    return false;
+            }
+
             return Map[i][j].CanMoveThrough;
         }
         // Throw exception IndexOutOfBoard?
@@ -134,21 +158,29 @@ public class Board {
 
             if (b.getNoClipTime() <= 0) {
                 for (PlayerTank pt : Players) {
-                    if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
-                        // TODO: reacting correctly to being shot
-                        pt.Explode(ExplosionImage);
-                        MovingTilesToDel.offer(b);
-                        //MovingTilesToDel.offer(pt);
-                    }
+                    // TODO: Change to bottom if, that one lets shooting between players
+                    if(b.getOwnerId() != Players.indexOf(pt) + 1)
+//                    // TODO: Change 1 and 2 to some (global) variables?
+//                    if (b.getOwnerId() != 1 && b.getOwnerId() != 2)
+                        if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
+                            // TODO: reacting correctly to being shot (e.g. updating hp)
+                            pt.Explode(ExplosionImage);
+                            MovingTilesToDel.offer(b);
+                            ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
+                            MovingTilesToDel.offer(pt);
+                        }
                 }
 
                 for (EnemyTank et : Enemies) {
-                    if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
-                        // TODO: after collision, some score update.
-                        et.Explode(ExplosionImage);
-                        MovingTilesToDel.offer(b);
-                        MovingTilesToDel.offer(et);
-                    }
+                    if (b.getOwnerId() != 0)
+                        if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
+                            // TODO: after collision, some score update.
+                            // TODO: put explosion, score update and texture change in some function, like Tank.IAmShotWhatDoIDoNow()
+                            et.Explode(ExplosionImage);
+                            MovingTilesToDel.offer(b);
+                            ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(et,ExplosionTime));
+                            MovingTilesToDel.offer(et);
+                        }
                 }
 
                 for (Bullet b2 : Bullets) {
@@ -185,11 +217,6 @@ public class Board {
         }
     }
 
-    public void Explode() {
-        // Placeholder
-        int i = 13;
-    }
-
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
         CheckCollisions();
         for(int i = 0; i < Map.length; i++)
@@ -198,6 +225,20 @@ public class Board {
                 if (t.texture != null)
                     gc.drawImage(t.texture, i * TileMeasurement, j * TileMeasurement, TileMeasurement, TileMeasurement);
             }
+
+            for(AbstractMap.SimpleEntry<Tank, Integer> explodingTank: ExplodingTanks) {
+                Tank tank = explodingTank.getKey();
+                explodingTank.setValue(explodingTank.getValue() - 1);
+                gc.drawImage(tank.texture, tank.X, tank.Y, TileMeasurement, TileMeasurement);
+            }
+
+            ExplodingTanks.removeIf(explodingTank -> {
+                // TODO: it's probably place to implement player tanks respawn
+                if (explodingTank.getValue() <= 0)
+                    return true;
+                return false;
+            });
+
         for (PlayerTank pt : Players) {
             int TextureChangeTime = (int) (15 / pt.getSpeed());
             if (!pt.IsMoving) {
@@ -334,7 +375,7 @@ public class Board {
                         x = 0;
                         y = 0;
                     }
-                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction));
+                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction, Players.indexOf(pt)+1));
 
                 }
             } else { // Shooting
