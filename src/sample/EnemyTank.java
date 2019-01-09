@@ -281,12 +281,6 @@ public class EnemyTank extends Tank{
         Double[][] estimations = new Double[w][h];
         Double[][] distance = new Double[w][h];
         Point[][] previous = new Point[w][h];
-//        for (Tile[] row: Board.Map) {
-//            for(Tile t: row){
-//                estimations[t.IX][t.IY] = Math.sqrt(Math.pow(t.IY-eagle.IY,2) + Math.pow(t.IX-eagle.IX,2)); //Euclidean distance as approx. heurestic
-//                distance[t.IX][t.IY] = Double.POSITIVE_INFINITY;
-//            }
-//        }
         for(int i=0;i<w;++i)
             for(int j=0;j<h;++j){
                 estimations[i][j] = Math.sqrt(Math.pow(j-eagle.IY,2) + Math.pow(i-eagle.IX,2)); //Euclidean distance as approx. heurestic
