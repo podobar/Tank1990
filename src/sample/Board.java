@@ -139,7 +139,20 @@ public class Board {
                             new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
                                         new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
                             );
+        EnemyTank testEnemy2 =
+                new EnemyTank(20,1,
+                        TileMeasurement*20,TileMeasurement,
+                        new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/down2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
+                );
         Enemies.add(testEnemy);
+        Enemies.add(testEnemy2);
         //Eventually enemies on map will be limited to max 6,
     }
 
@@ -209,6 +222,14 @@ public class Board {
 //                    if (b.getOwnerId() != 1 && b.getOwnerId() != 2)
                         if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
                             // TODO: reacting correctly to being shot (e.g. updating hp), it's something to talk about
+                            // TODO: BUG when one player is destroyed, enemy is shooting into the wall (but he wants to kill us) but then phew! Lots of exceptions
+                            if(pt.stamina==0){
+                                pt.IX=-1; pt.IY=-1;
+                            }
+                            else{
+                                //TODO: Respawn (checking if respawn field is empty, what if isn't?)
+                            }
+
                             pt.Explode(ExplosionImage);
                             MovingTilesToDel.offer(b);
                             ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
@@ -219,7 +240,9 @@ public class Board {
                 for (EnemyTank et : Enemies) {
                     //TODO:  Tank ID
                     if (b.getOwnerId() != 0)
-                        if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize)) {
+                        if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize) && et.IsDestroyed()) {
+                            //TODO: Replace addScore(500) with addScore(et.getReward)
+                            players[b.getOwnerId()-1].addScore(500);
                             // TODO: after collision, some score update.
                             // TODO: put explosion, score update and texture change in some function, like Tank.IAmShotWhatDoIDoNow()
                             et.Explode(ExplosionImage);
