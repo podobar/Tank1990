@@ -25,29 +25,45 @@ public class EnemyTank extends Tank{
     }
 
     public boolean MakeMove(){
-        if(!IsMoving){
+        if(!IsMoving ){
             if(CanShootToObjective())
                 return true;
 
             if(path.isEmpty()){
                 CreatePath();
+                if(path.isEmpty())
+                    return false; //You reached your destination
             }
-            Point nextTile = path.pop();
-            if(Math.abs(nextTile.x-IX ) + Math.abs(nextTile.y-IY) > 1) {
-                //Next move can't be performed, because it is "corner" move instead of "plus" move => Create new path
-                CreatePath();
-                nextTile = path.pop();
+            else{
+                Point nextTile = path.pop();
+                if(Math.abs(nextTile.x-IX ) + Math.abs(nextTile.y-IY) > 1) {
+                    //Next move can't be performed, because it is "corner" move instead of "plus" move => Create new path
+                    CreatePath();
+                    if(path.isEmpty())
+                        return false;
+                    else
+                        nextTile = path.pop();
+
+                }
+                //TODO: Perhaps some shooting when moving into destructible wall?
+                if(nextTile.x==IX+1){
+                    Direction="RIGHT";
+                    texture=TextureRight[0];
+                }
+                else if(nextTile.x==IX-1){
+                    Direction="LEFT";
+                    texture=TextureLeft[0];
+                }
+                else if(nextTile.y==IY-1){
+                    Direction="UP";
+                    texture=TextureUp[0];
+                }
+                else if(nextTile.y == IY+1)
+                {
+                    Direction="DOWN";
+                    texture=TextureDown[0];
+                }
             }
-            //TODO: Perhaps some shooting when moving into destructible wall?
-            if(nextTile.x==IX+1)
-                Direction="RIGHT";
-            else if(nextTile.x==IX-1)
-                Direction="LEFT";
-            else if(nextTile.y==IY-1)
-                Direction="UP";
-            else
-                Direction="DOWN";
-            return false;
         }
         return false;
     }
@@ -56,32 +72,36 @@ public class EnemyTank extends Tank{
         //If there is no indestructible terrain, friendly tanks between this tank and eagle ( this tank is in row || column of eagle) -> shoot eagle
         if(Board.Map[eagle.IX][eagle.IY].stamina>0){
             if(eagle.IX == IX){
-//            for(int i = IY+1;i<eagle.IY;++i)
-//                if(/*Board.Map[IX][i] instanceof EnemyTank ||*/ !Board.Map[IX][i].CanBeDestroyed)
-//                    return false;
+                for(int i= IY+1;i<eagle.IY;++i){
+                    if(Board.Map[IX][i].CanBeDestroyed==false)
+                        return false;
+                }
+                texture=TextureDown[0];
                 Direction="DOWN";
                 return true;
             }
             else if(eagle.IY == IY){
                 if(eagle.IX < IX)
                 {
-//                for(int i =IX-1;i>eagle.IX;--i)
-//                    if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                        return false;
+                    for(int i= IX-1;i>eagle.IX;--i){
+                        if(Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
+                    }
+                    texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
                 else //eagle.IX > IX
                 {
-//                for(int i =IX+1;i<eagle.IX;++i)
-//                    if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                        return false;
+                    for(int i =IX+1;i<eagle.IX;++i)
+                        if(!Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
+                    texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
                 }
             }
         }
-
         //If closest player is in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
         //If there is another player (not closest one) in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
         if(Math.sqrt(Math.pow(IX-Board.players[0].IX,2) + Math.pow(IY-Board.players[0].IY,2))<= Math.sqrt(Math.pow(IX-Board.players[1].IX,2) + Math.pow(IY-Board.players[1].IY,2))){
@@ -91,6 +111,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY-1;i>Board.players[0].IY;--i)
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
@@ -98,6 +119,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY+1; i< Board.players[0].IY;++i )
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureUp[0];
                     Direction="UP";
                     return true;
                 }
@@ -107,6 +129,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX-1;i>Board.players[0].IX;--i)
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
@@ -114,6 +137,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX+1; i< Board.players[0].IX;++i )
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
                 }
@@ -123,6 +147,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY-1;i>Board.players[1].IY;--i)
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
@@ -130,6 +155,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY+1; i< Board.players[1].IY;++i )
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureUp[0];
                     Direction="UP";
                     return true;
                 }
@@ -139,6 +165,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX-1;i>Board.players[1].IX;--i)
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
@@ -146,6 +173,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX+1; i< Board.players[1].IX;++i )
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
                 }
@@ -158,6 +186,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY-1;i>Board.players[1].IY;--i)
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
@@ -165,6 +194,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY+1; i< Board.players[1].IY;++i )
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureUp[0];
                     Direction="UP";
                     return true;
                 }
@@ -174,6 +204,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX-1;i>Board.players[1].IX;--i)
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
@@ -181,6 +212,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX+1; i< Board.players[1].IX;++i )
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
                 }
@@ -190,6 +222,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY-1;i>Board.players[0].IY;--i)
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
@@ -197,6 +230,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IY+1; i< Board.players[0].IY;++i )
 //                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
 //                            return false;
+                    texture=TextureUp[0];
                     Direction="UP";
                     return true;
                 }
@@ -206,6 +240,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX-1;i>Board.players[0].IX;--i)
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
@@ -213,6 +248,7 @@ public class EnemyTank extends Tank{
 //                    for(int i = IX+1; i< Board.players[0].IX;++i )
 //                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
 //                            return false;
+                    texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
                 }
@@ -242,7 +278,6 @@ public class EnemyTank extends Tank{
         // -Tanks are like indestructible terrain tiles, their weight is Double.POSITIVE_INFINITY;
         // -Destructible tiles have weight which depends on delay between shots multiplied by their stamina (terrain can take certain amount of damage)
         // -Normal tiles have weight = 1
-
         Double[][] estimations = new Double[w][h];
         Double[][] distance = new Double[w][h];
         Point[][] previous = new Point[w][h];
@@ -335,10 +370,12 @@ public class EnemyTank extends Tank{
                 }
             }
         }//while
-        Point pathNode = previous[eagle.IX][eagle.IY];
-        while(pathNode.x!=IX || pathNode.y!=IY){
-            path.add((Point)pathNode.clone());
-            pathNode=previous[pathNode.x][pathNode.y];
+        if(previous[eagle.IX][eagle.IY]!=null){
+            Point pathNode = previous[eagle.IX][eagle.IY];
+            while(pathNode.x!=IX || pathNode.y!=IY){
+                path.add((Point)pathNode.clone());
+                pathNode=previous[pathNode.x][pathNode.y];
+            }
         }
     }
     private Double EdgeWeight(Point from, Point to)

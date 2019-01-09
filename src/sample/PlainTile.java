@@ -15,7 +15,7 @@ public class PlainTile extends Tile {
         CanShotThrough = canShotThrough;
         CanBeDestroyed = canBeDestroyed;
         stamina = shield;
-        texture = StagesOfTile[0];
+        texture = StagesOfTile[stagesOfTile.length-1];
     }
 
     @Override
@@ -48,11 +48,11 @@ public class PlainTile extends Tile {
 
     @Override
     public double getX() {
-        return 0;
+        return IX/32;
     }
 
     @Override
     public double getY() {
-        return 0;
+        return IY/32;
     }
 }

@@ -72,24 +72,26 @@ public class Board {
                             true,
                             1
                     );
-                } else if (((i == Width / 2 - 1 || i == Width / 2 || i == Width / 2 + 1) && j == Height - 3)
+                }
+                else if (((i == Width / 2 - 1 || i == Width / 2 || i == Width / 2 + 1) && j == Height - 3)
                         || ((i == Width / 2 - 1 || i == Width / 2 + 1) && j == Height - 2)) {
                     //Bricks around the eagle
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
-                            new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Terrain/bricks3.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks2.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks1.jpg").toURI().toString())},
                             false,
                             true,
                             3
                     );
-                } else if (i == 0 || i == Map.length - 1 || j == 0 || j == Map[i].length - 1)
+                }
+                else if (i == 0 || i == Map.length - 1 || j == 0 || j == Map[i].length - 1)
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
-                            new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Terrain/bricks3.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks2.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks1.jpg").toURI().toString())},
                             false,
                             true,
                             3
@@ -140,8 +142,20 @@ public class Board {
                                         new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
                             );
         EnemyTank testEnemy2 =
-                new EnemyTank(20,1,
-                        TileMeasurement*20,TileMeasurement,
+                new EnemyTank(23,1,
+                        TileMeasurement*23,TileMeasurement*1,
+                        new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/down2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
+                );
+        EnemyTank testEnemy3 =
+                new EnemyTank(14,1,
+                        TileMeasurement*14,TileMeasurement*1,
                         new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
                                 new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
                         new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),
@@ -153,6 +167,7 @@ public class Board {
                 );
         Enemies.add(testEnemy);
         Enemies.add(testEnemy2);
+        Enemies.add(testEnemy3);
         //Eventually enemies on map will be limited to max 6,
     }
 
@@ -538,7 +553,13 @@ public class Board {
                         break;
                     }
                     case "LEFT": {
+                        if (IsMovementPossible(et.IX - 1, et.IY)) {
+                            et.IX--;
+                            et.IsMoving = true;
+                        }
 
+                        et.Direction = "LEFT";
+                        et.texture = et.TextureLeft[0];
                         break;
                     }
                     case "RIGHT": {
