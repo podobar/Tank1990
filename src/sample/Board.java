@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Board {
     public static Tile[][] Map;
-
+    public static PlayerTank[] players = new PlayerTank[2];
     private List<MovingTile> MovingTiles;   // Tanks, enemies and bullets
     private List<Bullet> Bullets;
     private List<PlayerTank> Players;
@@ -48,7 +48,7 @@ public class Board {
     // Add checking whether some MovingTile isn't on Tile (collisions)
 
     public void GenerateMap() {
-        MovingTiles = new LinkedList<>();   // <MovingTile>
+       MovingTiles = new LinkedList<>();   // <MovingTile>
         MovingTilesToAdd = new LinkedList<>(); // Queue
         MovingTilesToDel = new LinkedList<>();
         ExplodingTanks = new LinkedList<>();
@@ -78,8 +78,8 @@ public class Board {
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
                             new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
                             false,
                             true,
                             3
@@ -88,8 +88,8 @@ public class Board {
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
                             new Image[]{new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
-                                    new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
+                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks.jpg").toURI().toString())},
                             false,
                             true,
                             3
@@ -98,7 +98,7 @@ public class Board {
                     Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
             }
         //TODO: Add PlayerTanks to players[] -> enemies need to know where the players are in order to move properly
-        PlayerTank tank1 = new PlayerTank(
+        players[0] = new PlayerTank(
                 Width / 2 - 2, Height - 2,
                 (Width / 2 - 2) * TileMeasurement, (Height - 2) * TileMeasurement,
                 new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
@@ -112,7 +112,7 @@ public class Board {
                 new String[]{"UP", "DOWN", "LEFT", "RIGHT", "SLASH"}
         );
 
-        PlayerTank tank2 = new PlayerTank(
+        players[1] = new PlayerTank(
                 Width / 2 + 2, Height - 2,
                 (Width / 2 + 2) * TileMeasurement, (Height - 2) * TileMeasurement,
                 new Image[]{new Image(new File("Resources/Tanks/Blue/up1.png").toURI().toString()),
@@ -125,8 +125,8 @@ public class Board {
                         new Image(new File("Resources/Tanks/Blue/right2.png").toURI().toString())},
                 new String[]{"W", "S", "A", "D", "G"}
         );
-        Players.add(tank1);
-        Players.add(tank2);
+        Players.add(players[0]);
+        Players.add(players[1]);
         EnemyTank testEnemy =
                 new EnemyTank(1,1,
                             TileMeasurement,TileMeasurement,
@@ -489,126 +489,153 @@ public class Board {
             gc.drawImage(b.texture, b.X, b.Y, (int) (TileMeasurement / 3), (int) (TileMeasurement / 3));
         }
 
-//        for (EnemyTank et : Enemies) {
-//            int TextureChangeTime = (int) (15 / et.getSpeed());
-//
-//            // TODO: Enemies movement
-//            boolean worthShooting = et.MakeMove();
-//            if (!et.IsMoving) {
-//                switch (et.Direction) {
-//                    case "UP": {
-//                        if (IsMovementPossible(et.IX, et.IY - 1)) {
-//                            et.IY--;
-//                            et.IsMoving = true;
-//                        }
-//                        et.Direction = "UP";
-//                        et.texture = et.TextureUp[0];
-//                        break;
-//                    }
-//                    case "DOWN": {
-//                        if (IsMovementPossible(et.IX, et.IY + 1)) {
-//                            et.IY++;
-//                            et.IsMoving = true;
-//                        }
-//
-//                        et.Direction = "DOWN";
-//                        et.texture = et.TextureDown[0];
-//                        break;
-//                    }
-//                    case "LEFT": {
-//
-//                        break;
-//                    }
-//                    case "RIGHT": {
-//
-//                        break;
-//                    }
-//                }
-//            }
-//            else {
-//                Tile TileLocation = getTile(et.IX, et.IY);
-//                et.setTextureChangeCounter(et.getTextureChangeCounter() + 1);
-//                switch (et.Direction) {
-//                    case "UP":
-//                        et.Y -= (double) TileMeasurement / 60 * et.getSpeed();
-//
-//                        // Changing texture if needed, some ChangeTexture() function
-//
-//                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
-//                            //Something like ChangeTexture, if earlier tank loaded two of them
-//                            et.ChangeTexture();
-//
-//                            et.setTextureChangeCounter(0);
-//                        }
-//                        if (et.Y <= TileLocation.IY) {
-//                            et.Y = TileLocation.IY;
-//                            et.IsMoving = false;
-//                        }
-//                        break;
-//
-//                    case "DOWN":
-//                        et.Y += (double) TileMeasurement / 60 * et.getSpeed();
-//
-//                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
-//                            //Something like ChangeTexture, if earlier tank loaded two of them
-//                            et.ChangeTexture();
-//
-//                            et.setTextureChangeCounter(0);
-//                        }
-//
-//                        if (et.Y >= TileLocation.IY) {
-//                            et.Y = TileLocation.IY;
-//                            et.IsMoving = false;
-//                        }
-//                        break;
-//
-//                    case "LEFT":
-//                        et.X -= (double) TileMeasurement / 60 * et.getSpeed();
-//
-//                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
-//                            //Something like ChangeTexture, if earlier tank loaded two of them
-//                            et.ChangeTexture();
-//
-//                            et.setTextureChangeCounter(0);
-//                        }
-//
-//                        if (et.X <= TileLocation.IX) {
-//                            et.X = TileLocation.IX;
-//                            et.IsMoving = false;
-//                        }
-//                        break;
-//
-//                    case "RIGHT":
-//                        et.X += (double) TileMeasurement / 60 * et.getSpeed();
-//
-//                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
-//                            //Something like ChangeTexture, if earlier tank loaded two of them
-//                            et.ChangeTexture();
-//
-//                            et.setTextureChangeCounter(0);
-//                        }
-//
-//                        if (et.X >= TileLocation.IX) {
-//                            et.X = TileLocation.IX;
-//                            et.IsMoving = false;
-//                        }
-//                        break;
-//
-//                    default:
-//                        break;
-//                }
-//            }
-//
-//                if (!et.isShooting())     // Not shooting
-//                {
-//                    // TODO: Enemy shooting
-//
-//                } else { // Shooting
-//                    et.setShooting( et.ReduceShotDelay());
-//                }
-//
-//                gc.drawImage(et.texture, et.X, et.Y, TileMeasurement, TileMeasurement);
-//        }
+        for (EnemyTank et : Enemies) {
+            int TextureChangeTime = (int) (15 / et.getSpeed());
+
+            // TODO: Enemies movement
+            boolean worthShooting = et.MakeMove();
+            if (!et.IsMoving) {
+                switch (et.Direction) {
+                    case "UP": {
+                        if (IsMovementPossible(et.IX, et.IY - 1)) {
+                            et.IY--;
+                            et.IsMoving = true;
+                        }
+                        et.Direction = "UP";
+                        et.texture = et.TextureUp[0];
+                        break;
+                    }
+                    case "DOWN": {
+                        if (IsMovementPossible(et.IX, et.IY + 1)) {
+                            et.IY++;
+                            et.IsMoving = true;
+                        }
+
+                        et.texture = et.TextureDown[0];
+                        break;
+                    }
+                    case "LEFT": {
+
+                        break;
+                    }
+                    case "RIGHT": {
+                        if (IsMovementPossible(et.IX + 1, et.IY)) {
+                            et.IX++;
+                            et.IsMoving = true;
+                        }
+                        et.texture = et.TextureRight[0];
+                        break;
+                    }
+                }
+            }
+            else {
+                Tile TileLocation = getTile(et.IX, et.IY);
+                et.setTextureChangeCounter(et.getTextureChangeCounter() + 1);
+                switch (et.Direction) {
+                    case "UP":
+                        et.Y -= (double) TileMeasurement / 60 * et.getSpeed();
+
+                        // Changing texture if needed, some ChangeTexture() function
+
+                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
+                            //Something like ChangeTexture, if earlier tank loaded two of them
+                            et.ChangeTexture();
+
+                            et.setTextureChangeCounter(0);
+                        }
+                        if (et.Y <= TileLocation.IY) {
+                            et.Y = TileLocation.IY;
+                            et.IsMoving = false;
+                        }
+                        break;
+
+                    case "DOWN":
+                        et.Y += (double) TileMeasurement / 60 * et.getSpeed();
+
+                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
+                            //Something like ChangeTexture, if earlier tank loaded two of them
+                            et.ChangeTexture();
+
+                            et.setTextureChangeCounter(0);
+                        }
+
+                        if (et.Y >= TileLocation.IY) {
+                            et.Y = TileLocation.IY;
+                            et.IsMoving = false;
+                        }
+                        break;
+
+                    case "LEFT":
+                        et.X -= (double) TileMeasurement / 60 * et.getSpeed();
+
+                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
+                            //Something like ChangeTexture, if earlier tank loaded two of them
+                            et.ChangeTexture();
+
+                            et.setTextureChangeCounter(0);
+                        }
+
+                        if (et.X <= TileLocation.IX) {
+                            et.X = TileLocation.IX;
+                            et.IsMoving = false;
+                        }
+                        break;
+
+                    case "RIGHT":
+                        et.X += (double) TileMeasurement / 60 * et.getSpeed();
+
+                        if (et.getTextureChangeCounter() % TextureChangeTime == 0) {
+                            //Something like ChangeTexture, if earlier tank loaded two of them
+                            et.ChangeTexture();
+
+                            et.setTextureChangeCounter(0);
+                        }
+
+                        if (et.X >= TileLocation.IX) {
+                            et.X = TileLocation.IX;
+                            et.IsMoving = false;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+                if (!et.isShooting())     // Not shooting
+                {
+                    // TODO: Enemy shooting
+                    if (worthShooting)     // Add Controls to Tank?
+                    {
+                        et.setShooting(true);
+                        et.ShotDelay();
+                        int x, y;
+                        if (et.Direction.equals("UP")) {
+                            x = (int) et.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                            y = (int) et.Y - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                        } else if (et.Direction.equals("DOWN")) {
+                            x = (int) et.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                            y = (int) et.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 = bullet size
+                        } else if (et.Direction.equals("LEFT")) {
+                            x = (int) et.X - TileMeasurement / (2 * 3);
+                            y = (int) et.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                        } else if (et.Direction.equals("RIGHT")) {
+                            x = (int) et.X + TileMeasurement - TileMeasurement / (2 * 3);
+                            y = (int) et.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+                        } else {      // Exception - Direction different from U,D,L,R
+                            x = 0;
+                            y = 0;
+                        }
+                        MovingTilesToAdd.offer(new Bullet(et.IX, et.IY, x, y, et.Direction, 0));
+
+                    }
+
+                } else { // Shooting
+                    et.setShooting( et.ReduceShotDelay());
+                }
+
+                gc.drawImage(et.texture, et.X, et.Y, TileMeasurement, TileMeasurement);
+        }
 
         while(!MovingTilesToAdd.isEmpty()){
 

@@ -12,7 +12,6 @@ import java.util.List;
 
 
 public class Main extends Application {
-    public static PlayerTank[] players = new PlayerTank[2];
     public static List<HBox> views = new ArrayList<HBox>();
     public static StackPane root = new StackPane();
     public static ArrayList<String> input = new ArrayList<>();
