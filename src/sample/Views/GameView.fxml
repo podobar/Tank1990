@@ -14,13 +14,15 @@
     <Canvas fx:id="canvas"  height="512" width="800"  />
     <VBox fx:id="menu" spacing="20" minHeight="512" style="-fx-background-color: grey;" alignment="center">
         <HBox fx:id="enemyBox" minHeight="150" minWidth="180" style="-fx-background-color: pink"/>
-        <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: blue; -fx-padding: 20px">
-            <Label text="Lives: "/>
-            <Label text="Score: "/>
+        <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: yellow; -fx-padding: 20px">
+            <Label text="Player 1"/>
+            <Label fx:id="player1LivesLabel" text="Lives: "/>
+            <Label fx:id="player1ScoreLabel" text="Score: "/>
         </VBox>
-        <VBox fx:id="player2Box" minHeight="100" minWidth="180" style="-fx-background-color: green; -fx-padding: 20px;">
-            <Label text="Lives: "/>
-            <Label text="Score: "/>
+        <VBox fx:id="player2Box" minHeight="100" minWidth="180"  style="-fx-background-color: yellow; -fx-padding: 20px;">
+            <Label text="Player 2" textAlignment="center"/>
+            <Label fx:id="player2LivesLabel" text="Lives: "/>
+            <Label fx:id="player2ScoreLabel" text="Score: "/>
         </VBox>
         <Button fx:id="newGameButton" minHeight="50" minWidth="100" text="Reset"/>
     </VBox>

@@ -14,16 +14,14 @@ public class EnemyTank extends Tank{
     int w =25;
     int h =16;
     Tile eagle = new PlainTile(12,14);
-    //int Board.MapHeight,Board.MapWidth;
     int shotDelay;
     private Stack<Point> path;
-    //Direction is already here, deleted.
-
-    public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight) {
+    private int reward;
+    public int getReward() {return reward;}
+    public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight, int reward) {
         super(iX, iY, x, y, texturesUp, texturesDown, texturesLeft, texturesRight);
         CreatePath();
     }
-
     public boolean MakeMove(){
         if(!IsMoving ){
             if(CanShootToObjective())
@@ -108,17 +106,17 @@ public class EnemyTank extends Tank{
             //Distance from P1 is smaller than from P2
             if(Board.players[0].IX == IX){
                 if(Board.players[0].IY > IY){ //player lower than enemy
-//                    for(int i = IY-1;i>Board.players[0].IY;--i)
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY+1;i<Board.players[0].IY;++i)
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-//                    for(int i = IY+1; i< Board.players[0].IY;++i )
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY-1; i > Board.players[0].IY;--i )
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureUp[0];
                     Direction="UP";
                     return true;
@@ -126,17 +124,17 @@ public class EnemyTank extends Tank{
             }
             else if(Board.players[0].IY == IY){
                 if(Board.players[0].IX < IX){ //player is on the left of the enemy
-//                    for(int i = IX-1;i>Board.players[0].IX;--i)
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX-1;i>Board.players[0].IX;--i)
+                        if(Board.Map[i][IY].CanBeDestroyed == false)
+                            return false;
                     texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-//                    for(int i = IX+1; i< Board.players[0].IX;++i )
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX+1; i< Board.players[0].IX;++i )
+                        if(Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
                     texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
@@ -144,17 +142,17 @@ public class EnemyTank extends Tank{
             }
             if(Board.players[1].IX == IX){
                 if(Board.players[1].IY > IY){ //player lower than enemy
-//                    for(int i = IY-1;i>Board.players[1].IY;--i)
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY+1;i<Board.players[1].IY;++i)
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-//                    for(int i = IY+1; i< Board.players[1].IY;++i )
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY-1; i >  Board.players[1].IY;--i )
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureUp[0];
                     Direction="UP";
                     return true;
@@ -162,17 +160,17 @@ public class EnemyTank extends Tank{
             }
             else if(Board.players[1].IY == IY){
                 if(Board.players[1].IX < IX){ //player is on the left of the enemy
-//                    for(int i = IX-1;i>Board.players[1].IX;--i)
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX-1;i>Board.players[1].IX;--i)
+                        if(Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
                     texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-//                    for(int i = IX+1; i< Board.players[1].IX;++i )
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX+1; i< Board.players[1].IX;++i )
+                        if(Board.Map[i][IY].CanBeDestroyed)
+                            return false;
                     texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
@@ -183,17 +181,17 @@ public class EnemyTank extends Tank{
         {
             if(Board.players[1].IX == IX){
                 if(Board.players[1].IY > IY){ //player lower than enemy
-//                    for(int i = IY-1;i>Board.players[1].IY;--i)
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY+1;i<Board.players[0].IY;++i)
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-//                    for(int i = IY+1; i< Board.players[1].IY;++i )
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY-1; i >  Board.players[1].IY;--i )
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureUp[0];
                     Direction="UP";
                     return true;
@@ -201,17 +199,17 @@ public class EnemyTank extends Tank{
             }
             else if(Board.players[1].IY == IY){
                 if(Board.players[1].IX < IX){ //player is on the left of the enemy
-//                    for(int i = IX-1;i>Board.players[1].IX;--i)
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX-1;i>Board.players[1].IX;--i)
+                        if(Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
                     texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-//                    for(int i = IX+1; i< Board.players[1].IX;++i )
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX+1; i< Board.players[1].IX;++i )
+                        if(Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
                     texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
@@ -219,17 +217,17 @@ public class EnemyTank extends Tank{
             }
             if(Board.players[0].IX == IX){
                 if(Board.players[0].IY > IY){ //player lower than enemy
-//                    for(int i = IY-1;i>Board.players[0].IY;--i)
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY+1;i<Board.players[0].IY;++i)
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureDown[0];
                     Direction="DOWN";
                     return true;
                 }
                 else{ //player higher than enemy
-//                    for(int i = IY+1; i< Board.players[0].IY;++i )
-//                        if(Board.Map[IX][i] instanceof EnemyTank || !Board.Map[IX][i].CanBeDestroyed)
-//                            return false;
+                    for(int i = IY-1; i > Board.players[0].IY;--i )
+                        if(Board.Map[IX][i].CanBeDestroyed==false)
+                            return false;
                     texture=TextureUp[0];
                     Direction="UP";
                     return true;
@@ -237,17 +235,17 @@ public class EnemyTank extends Tank{
             }
             else if(Board.players[0].IY == IY){
                 if(Board.players[0].IX < IX){ //player is on the left of the enemy
-//                    for(int i = IX-1;i>Board.players[0].IX;--i)
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX-1;i>Board.players[0].IX;--i)
+                        if(Board.Map[i][IY].CanBeDestroyed == false)
+                            return false;
                     texture=TextureLeft[0];
                     Direction="LEFT";
                     return true;
                 }
                 else{ //player is on the right of the enemy
-//                    for(int i = IX+1; i< Board.players[0].IX;++i )
-//                        if(Board.Map[i][IY] instanceof EnemyTank || !Board.Map[i][IY].CanBeDestroyed)
-//                            return false;
+                    for(int i = IX+1; i< Board.players[0].IX;++i )
+                        if(Board.Map[i][IY].CanBeDestroyed==false)
+                            return false;
                     texture=TextureRight[0];
                     Direction="RIGHT";
                     return true;
@@ -256,16 +254,7 @@ public class EnemyTank extends Tank{
         }
         return false;
     }
-    //    private void Shoot(){
-//        //TODO: shoot a bullet i
-//
-//    }
-//    private boolean IsMovePossible(Point p){
-//        //TODO: If any shots to objectives is not available(player tanks, eagle) and tank can't move (is stuck between terrain tiles, but not between other AI tanks) it shoots to terrain.
-//        if(Board.Map[p.y][p.x].CanMoveThrough)
-//            return true;
-//        return false;
-//    }
+
     private void CreatePath(){
         //TODO: Check why second enemy(right upper corner doesn't do what he's supposed to do (except for not changing texture when changing direction)) suddenly stops
         //Own implementation of A* algorithm, on start we have:

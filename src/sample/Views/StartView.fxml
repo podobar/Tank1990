@@ -17,16 +17,6 @@
     <Label text="Tank 1990: Rebirth"/>
     <HBox alignment="center" spacing="20">
         <VBox alignment="center" spacing="20">
-            <ImageView fx:id="player1TankImage" fitHeight="30" fitWidth="30"/>
-            <Label text="W"/>
-            <HBox spacing="20">
-                <Label text="A"/>
-                <Label text="G"/>
-                <Label text="D"/>
-            </HBox>
-            <Label text="S"/>
-        </VBox>
-        <VBox alignment="center" spacing="20">
             <ImageView fx:id="player2TankImage" fitHeight="30" fitWidth="30"/>
             <Label text="↑"/>
             <HBox spacing="20">
@@ -36,6 +26,17 @@
             </HBox>
             <Label text="↓"/>
         </VBox>
+        <VBox alignment="center" spacing="20">
+            <ImageView fx:id="player1TankImage" fitHeight="30" fitWidth="30"/>
+            <Label text="W"/>
+            <HBox spacing="20">
+                <Label text="A"/>
+                <Label text="G"/>
+                <Label text="D"/>
+            </HBox>
+            <Label text="S"/>
+        </VBox>
+
     </HBox>
     <CheckBox text="2 players"/>
     <Button text="Start" onMouseClicked="#startGame"/>

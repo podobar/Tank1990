@@ -63,6 +63,7 @@ public class Board {
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
 
+
                 if (i == Width / 2 && j == Height - 2) {
                     //Eagle
                     Map[i][j] = new PlainTile(
@@ -96,6 +97,15 @@ public class Board {
                             true,
                             3
                     );
+                else if(j==3 && i>=10 && i<=14){
+                    Map[i][j] = new PlainTile(
+                            i * TileMeasurement, j * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Terrain/indestructible.png").toURI().toString())},
+                            false,
+                            false,
+                            1
+                    );
+                }
                 else
                     Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
             }
@@ -111,7 +121,8 @@ public class Board {
                         new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
                 new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
                         new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())},
-                new String[]{"UP", "DOWN", "LEFT", "RIGHT", "SLASH"}
+                new String[]{"UP", "DOWN", "LEFT", "RIGHT", "SLASH"},
+                1
         );
 
         players[1] = new PlayerTank(
@@ -125,22 +136,24 @@ public class Board {
                         new Image(new File("Resources/Tanks/Blue/left2.png").toURI().toString())},
                 new Image[]{new Image(new File("Resources/Tanks/Blue/right1.png").toURI().toString()),
                         new Image(new File("Resources/Tanks/Blue/right2.png").toURI().toString())},
-                new String[]{"W", "S", "A", "D", "G"}
+                new String[]{"W", "S", "A", "D", "G"},
+                1
         );
         Players.add(players[0]);
         Players.add(players[1]);
         EnemyTank testEnemy =
                 new EnemyTank(1,1,
-                            TileMeasurement,TileMeasurement,
-                            new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
-                                        new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
-                            new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),
-                                        new Image(new File("Resources/Tanks/Green/down2.png").toURI().toString())},
-                            new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
-                                        new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
-                            new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
-                                        new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
-                            );
+                        TileMeasurement,TileMeasurement,
+                        new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Green/down2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString()),},
+                        500
+                        );
         EnemyTank testEnemy2 =
                 new EnemyTank(23,1,
                         TileMeasurement*23,TileMeasurement*1,
@@ -151,7 +164,8 @@ public class Board {
                         new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
                                 new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
                         new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
+                                new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())},
+                        500
                 );
         EnemyTank testEnemy3 =
                 new EnemyTank(14,1,
@@ -163,7 +177,8 @@ public class Board {
                         new Image[]{new Image(new File("Resources/Tanks/Green/left1.png").toURI().toString()),
                                 new Image(new File("Resources/Tanks/Green/left2.png").toURI().toString())},
                         new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())}
+                                new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())},
+                        500
                 );
         Enemies.add(testEnemy);
         Enemies.add(testEnemy2);
@@ -253,13 +268,9 @@ public class Board {
                 }
 
                 for (EnemyTank et : Enemies) {
-                    //TODO:  Tank ID
                     if (b.getOwnerId() != 0)
                         if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize) && et.IsDestroyed()) {
-                            //TODO: Replace addScore(500) with addScore(et.getReward)
                             players[b.getOwnerId()-1].addScore(500);
-                            // TODO: after collision, some score update.
-                            // TODO: put explosion, score update and texture change in some function, like Tank.IAmShotWhatDoIDoNow()
                             et.Explode(ExplosionImage);
                             MovingTilesToDel.offer(b);
                             ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(et,ExplosionTime));
