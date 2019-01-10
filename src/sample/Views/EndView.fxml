@@ -11,5 +11,6 @@
         <Label text="Thank you for playing Tank 1990: Rebirth!" />
         <Label text="Inspired by historical events."/>
         <Label text="This work of fiction was designed, developed and produced by a monocultural team of the same slavic origin."/>
+        <Label text="Tank, bullets and explosions textures: zironid_n (opengameart.org)"/>
     </VBox>
 </HBox>
