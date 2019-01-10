@@ -19,11 +19,16 @@ public class Board {
     private Queue<MovingTile> MovingTilesToAdd;
     private Queue<MovingTile> MovingTilesToDel;
     private Queue<AbstractMap.SimpleEntry<Tank, Integer>> ExplodingTanks;
+    private List<Pair<Integer,Integer>> Spawns;
     private int Width;
     private int Height;
     private int TileMeasurement;
+    private int EnemiesLimit;
+    private int EnemyAddCounter;
     private int ExplosionTime;
     private Image ExplosionImage;
+
+    private Random r;
 
     public int getWidth() {
         return Width;
@@ -38,8 +43,11 @@ public class Board {
         Height = height;
         TileMeasurement = tileLength;
         ExplosionImage = new Image(new File("Resources/Explosion1/3.png").toURI().toString());
-        // TODO: to think about how long does explosion stay
+        r = new Random();
+        // TODO: to think about how long does explosion stay, how many enemies are there
         ExplosionTime = 60;
+        EnemiesLimit = 5;
+        EnemyAddCounter = 180;
     }
 
     public Tile getTile(int i, int j) {
@@ -53,6 +61,11 @@ public class Board {
         MovingTilesToAdd = new LinkedList<>(); // Queue
         MovingTilesToDel = new LinkedList<>();
         ExplodingTanks = new LinkedList<>();
+
+        Spawns = new LinkedList<>();
+        Spawns.add(new Pair<>(1,1));
+        Spawns.add(new Pair<>(13,1));
+        Spawns.add(new Pair<>(23,1));
 
         //MapTile
         Map = new Tile[Width][Height];
@@ -316,6 +329,25 @@ public class Board {
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
         CheckCollisions();
+        if(EnemyAddCounter <= 0 && Enemies.size() < EnemiesLimit)
+        {
+            Pair<Integer,Integer> spawn = Spawns.get(r.nextInt(Spawns.size()));
+            int iX = spawn.getKey(), iY = spawn.getValue();
+            Enemies.add(new EnemyTank(iX, iY, iX*TileMeasurement, iY*TileMeasurement,
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
+                    500));
+            EnemyAddCounter = 180;
+        }
+        else{
+            EnemyAddCounter--;
+        }
         for(int i = 0; i < Map.length; i++)
             for(int j = 0; j < Map[i].length; j++) {
                 Tile t = Map[i][j];

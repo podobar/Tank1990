@@ -12,7 +12,7 @@ abstract public class Tank extends MovingTile {
     }
 
     private static int idCounter = 0;
-    private double attackSpeed; // bullets per second?
+    protected double attackSpeed; // bullets per second?
     //TODO: Should score be in Tank.java instead of PlayerTank? When enemy tank is destroyed and player's bullet did it -> he'll receive EnemyTank.getScore() for taking him down
     //TEMP
 
@@ -61,8 +61,8 @@ abstract public class Tank extends MovingTile {
         IsShooting = shooting;
     }
 
-    public void ShotDelay(){
-        ShotDelay =(int) (60 / attackSpeed);
+    public void ShotDelay() {
+        ShotDelay = (int) (60 / attackSpeed);
     }
 
     // False when delay has ended.
@@ -73,7 +73,7 @@ abstract public class Tank extends MovingTile {
         return true;
     }
 
-    public void Explode(Image ExplosionImage){
+    public void Explode(Image ExplosionImage) {
         texture = ExplosionImage;
         //IsMoving = false;
     }
