@@ -5,14 +5,26 @@ import javafx.scene.image.Image;
 
 // Should I add classes PlayerTank and EnemyTank?
 abstract public class Tank extends MovingTile {
+    private int id;
 
-    private double attackSpeed; // bullets per second?
+
+    public int getId() {
+        return id;
+    }
+
+    private static int idCounter = 0;
+    protected double attackSpeed; // bullets per second?
+    //TODO: Should score be in Tank.java instead of PlayerTank? When enemy tank is destroyed and player's bullet did it -> he'll receive EnemyTank.getScore() for taking him down
+    //TEMP
+
 
     private int ShotDelay;
 
     private boolean IsShooting;
 
     public Tank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight) {
+        id = idCounter++;
+
         IX = iX;
         IY = iY;
         X = x;
@@ -51,8 +63,8 @@ abstract public class Tank extends MovingTile {
         IsShooting = shooting;
     }
 
-    public void ShotDelay(){
-        ShotDelay =(int) (60 / attackSpeed);
+    public void ShotDelay() {
+        ShotDelay = (int) (60 / attackSpeed);
     }
 
     // False when delay has ended.
@@ -63,7 +75,7 @@ abstract public class Tank extends MovingTile {
         return true;
     }
 
-    public void Explode(Image ExplosionImage){
+    public void Explode(Image ExplosionImage) {
         texture = ExplosionImage;
         //IsMoving = false;
     }
