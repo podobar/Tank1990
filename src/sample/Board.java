@@ -3,6 +3,7 @@ package sample;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Pair;
+import sample.Controllers.StartViewController;
 
 import java.io.File;
 import java.util.*;
@@ -140,7 +141,10 @@ public class Board {
                 1
         );
         Players.add(players[0]);
-        Players.add(players[1]);
+        if(StartViewController.twoPlayers==true){
+            Players.add(players[1]);
+        }
+
         EnemyTank testEnemy =
                 new EnemyTank(1,1,
                         TileMeasurement,TileMeasurement,
@@ -254,6 +258,7 @@ public class Board {
                             // TODO: reacting correctly to being shot (e.g. updating hp), it's something to talk about
                             // TODO: BUG when one player is destroyed, enemy is shooting into the wall (but he wants to kill us) but then phew! Lots of exceptions
                             if(pt.stamina==0){
+
                                 pt.IX=-1; pt.IY=-1;
                             }
                             else{
