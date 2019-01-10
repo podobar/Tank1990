@@ -24,7 +24,8 @@ public class Board {
     private int Height;
     private int TileMeasurement;
     private int EnemiesLimit;
-    private int EnemyAddCounter;
+    private int EnemyAddTimer;
+    private int EnemiesOverallLimit;
     private int ExplosionTime;
     private Image ExplosionImage;
 
@@ -44,10 +45,11 @@ public class Board {
         TileMeasurement = tileLength;
         ExplosionImage = new Image(new File("Resources/Explosion1/3.png").toURI().toString());
         r = new Random();
-        // TODO: to think about how long does explosion stay, how many enemies are there
+        // TODO: to think about numbers below
         ExplosionTime = 60;
-        EnemiesLimit = 5;
-        EnemyAddCounter = 180;
+        EnemiesLimit = 6;
+        EnemyAddTimer = 180;
+        EnemiesOverallLimit = 15;
     }
 
     public Tile getTile(int i, int j) {
@@ -195,8 +197,11 @@ public class Board {
                         500
                 );
         Enemies.add(testEnemy);
+        EnemiesOverallLimit--;
         Enemies.add(testEnemy2);
+        EnemiesOverallLimit--;
         Enemies.add(testEnemy3);
+        EnemiesOverallLimit--;
         //Eventually enemies on map will be limited to max 6,
     }
 
@@ -329,7 +334,7 @@ public class Board {
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
         CheckCollisions();
-        if(EnemyAddCounter <= 0 && Enemies.size() < EnemiesLimit)
+        if(EnemyAddTimer <= 0 && Enemies.size() < EnemiesLimit && EnemiesOverallLimit > 0)
         {
             Pair<Integer,Integer> spawn = Spawns.get(r.nextInt(Spawns.size()));
             int iX = spawn.getKey(), iY = spawn.getValue();
@@ -343,10 +348,11 @@ public class Board {
                     new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
                             new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
                     500));
-            EnemyAddCounter = 180;
+            EnemyAddTimer = 180;
+            EnemiesOverallLimit--;
         }
         else{
-            EnemyAddCounter--;
+            EnemyAddTimer--;
         }
         for(int i = 0; i < Map.length; i++)
             for(int j = 0; j < Map[i].length; j++) {
