@@ -2,8 +2,7 @@ package sample;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.util.Pair;
-import sample.Controllers.StartViewController;
+import sample.Controllers.GameViewController;
 
 import java.io.File;
 import java.util.*;
@@ -12,6 +11,7 @@ import java.util.*;
 public class Board {
     public static Tile[][] Map;
     public static PlayerTank[] players = new PlayerTank[2];
+    public static boolean enemiesKilled=false;
     private List<MovingTile> MovingTiles;   // Tanks, enemies and bullets
     private List<Bullet> Bullets;
     private List<PlayerTank> Players;
@@ -182,8 +182,8 @@ public class Board {
                         500
                 );
         Enemies.add(testEnemy);
-        Enemies.add(testEnemy2);
-        Enemies.add(testEnemy3);
+//        Enemies.add(testEnemy2);
+//        Enemies.add(testEnemy3);
         //Eventually enemies on map will be limited to max 6,
     }
 
@@ -315,6 +315,9 @@ public class Board {
     }
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
+        if(Enemies.isEmpty()) /*&& Stack<EnemyTank>EnemiesToSpawn.isEmpty()*/{
+            enemiesKilled=true;
+        }
         CheckCollisions();
         for(int i = 0; i < Map.length; i++)
             for(int j = 0; j < Map[i].length; j++) {

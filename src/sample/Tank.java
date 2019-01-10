@@ -7,8 +7,6 @@ import javafx.scene.image.Image;
 abstract public class Tank extends MovingTile {
 
     private double attackSpeed; // bullets per second?
-    //TODO: Should score be in Tank.java instead of PlayerTank? When enemy tank is destroyed and player's bullet did it -> he'll receive EnemyTank.getScore() for taking him down
-    //TEMP
 
     private int ShotDelay;
 
