@@ -580,7 +580,7 @@ public class Board {
                 }
             }
 
-            gc.drawImage(b.texture, b.X, b.Y, (int) (TileMeasurement / 3), (int) (TileMeasurement / 3));
+            gc.drawImage(b.texture, b.X, b.Y, (TileMeasurement / 3), (TileMeasurement / 3));
         }
 
         for (EnemyTank et : Enemies) {
@@ -710,21 +710,31 @@ public class Board {
                         et.setShooting(true);
                         et.ShotDelay();
                         int x, y;
-                        if (et.Direction.equals("UP")) {
-                            x = (int) et.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
-                            y = (int) et.Y - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
-                        } else if (et.Direction.equals("DOWN")) {
-                            x = (int) et.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
-                            y = (int) et.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 = bullet size
-                        } else if (et.Direction.equals("LEFT")) {
-                            x = (int) et.X - TileMeasurement / (2 * 3);
-                            y = (int) et.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
-                        } else if (et.Direction.equals("RIGHT")) {
-                            x = (int) et.X + TileMeasurement - TileMeasurement / (2 * 3);
-                            y = (int) et.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
-                        } else {      // Exception - Direction different from U,D,L,R
-                            x = 0;
-                            y = 0;
+                        switch (et.Direction) {
+                            case "UP":
+                                x = (int) et.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                                y = (int) et.Y - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+
+                                break;
+                            case "DOWN":
+                                x = (int) et.X + TileMeasurement / 2 - TileMeasurement / (2 * 3);
+                                y = (int) et.Y + TileMeasurement - TileMeasurement / 3; // TileMeasurement/3 = bullet size
+
+                                break;
+                            case "LEFT":
+                                x = (int) et.X - TileMeasurement / (2 * 3);
+                                y = (int) et.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+
+                                break;
+                            case "RIGHT":
+                                x = (int) et.X + TileMeasurement - TileMeasurement / (2 * 3);
+                                y = (int) et.Y + TileMeasurement / 2 - TileMeasurement / (2 * 3); // TileMeasurement/3 = bullet size
+
+                                break;
+                            default:       // Exception - Direction different from U,D,L,R
+                                x = 0;
+                                y = 0;
+                                break;
                         }
                         MovingTilesToAdd.offer(new Bullet(et.IX, et.IY, x, y, et.Direction, et.getId()));
 
@@ -740,12 +750,12 @@ public class Board {
         while(!MovingTilesToAdd.isEmpty()){
 
             // TODO: Change adding with Board.AddMovingTile(MovingTilesToAdd.poll()) ?
-            MovingTile mt = MovingTilesToAdd.poll();
-            if(mt instanceof Bullet)
-                Bullets.add((Bullet)mt);
-            else if (mt instanceof EnemyTank)
-                Enemies.add((EnemyTank)mt);
-
+//            MovingTile mt = MovingTilesToAdd.poll();
+//            if(mt instanceof Bullet)
+//                Bullets.add((Bullet)mt);
+//            else if (mt instanceof EnemyTank)
+//                Enemies.add((EnemyTank)mt);
+            AddMovingTile(MovingTilesToAdd.poll());
             // TODO: Will there be any other MovingTiles?
         }
     }
