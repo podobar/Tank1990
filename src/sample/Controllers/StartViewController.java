@@ -6,11 +6,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import sample.Board;
 import sample.Main;
 
 
 public class StartViewController {
-    public static boolean twoPlayers=true;
+
     @FXML
     CheckBox twoPlayersCheckBox;
     @FXML
@@ -18,10 +19,7 @@ public class StartViewController {
     @FXML
     VBox player1VBox, player2VBox;
 
-    private void ValidateInput()
-    {
-        //check if user chose free key for control
-    }
+    private boolean twoPlayers=true;
     public void initialize()
     {
         player2TankImage.setImage(new Image("Tanks/Blue/down1.png"));
@@ -37,11 +35,12 @@ public class StartViewController {
             player2VBox.setVisible(false);
             twoPlayers=false;
         }
-
-
     }
     @FXML
     private void startGame(MouseEvent e){
+        if(twoPlayers==false){
+            Board.players[1].setLives(0);
+        }
         Main.root.getChildren().remove(0);
         Main.root.getChildren().add(sample.Main.views.get(0));
         GameViewController.timer.start();

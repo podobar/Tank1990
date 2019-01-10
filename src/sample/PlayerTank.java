@@ -17,6 +17,7 @@ public class PlayerTank extends Tank{
         return score;
     }
     public int getLives() {return lives;}
+    public void setLives(int lives) {this.lives=lives;}
     public void addScore(int score){ this.score+=(score);}
     public String getControl(int i) {
         if (i >= 0 && i < Controls.length)
