@@ -182,8 +182,8 @@ public class Board {
                         500
                 );
         Enemies.add(testEnemy);
-//        Enemies.add(testEnemy2);
-//        Enemies.add(testEnemy3);
+        Enemies.add(testEnemy2);
+        Enemies.add(testEnemy3);
         //Eventually enemies on map will be limited to max 6,
     }
 
@@ -294,6 +294,10 @@ public class Board {
                             if (b.CheckCollision(bulletSize, i*TileMeasurement, j*TileMeasurement, TileMeasurement)) {
                                 // TODO: after collision, what happens with tile.
                                 if(Map[i][j].IsDestroyed()) {
+                                    if(i == Width / 2 && j == Height - 2){
+                                        players[0].setLives(0);
+                                        players[1].setLives(0);
+                                    }
                                     Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
                                 }
 
