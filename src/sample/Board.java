@@ -247,10 +247,7 @@ public class Board {
 
             if (b.getNoClipTime() <= 0) {
                 for (PlayerTank pt : Players) {
-                    // TODO: Change to bottom if, that one lets shooting between players
-                    if(b.getOwnerId() != Players.indexOf(pt) + 1)
-//                    // TODO: Change 1 and 2 to some (global) variables?
-//                    if (b.getOwnerId() != 1 && b.getOwnerId() != 2)
+                    if(b.getOwnerId() != pt.getId())
                         if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
                             // TODO: reacting correctly to being shot (e.g. updating hp), it's something to talk about
                             // TODO: BUG when one player is destroyed, enemy is shooting into the wall (but he wants to kill us) but then phew! Lots of exceptions
@@ -270,9 +267,12 @@ public class Board {
                 }
 
                 for (EnemyTank et : Enemies) {
-                    if (b.getOwnerId() != 0)
+                    if (b.getOwnerId() != et.getId())
                         if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize) && et.IsDestroyed()) {
-                            players[b.getOwnerId()-1].addScore(500);
+//                            players[b.getOwnerId()-1].addScore(500);
+                            for(int i = 0; i<players.length; i++)
+                                if(players[i].getId() == b.getOwnerId())
+                                    players[i].addScore(500);
                             et.Explode(ExplosionImage);
                             MovingTilesToDel.offer(b);
                             ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(et,ExplosionTime));
@@ -477,8 +477,8 @@ public class Board {
                         x = 0;
                         y = 0;
                     }
-                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction, Players.indexOf(pt)+1));
-
+//                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction, Players.indexOf(pt)+1));
+                    MovingTilesToAdd.offer(new Bullet(pt.IX, pt.IY, x, y, pt.Direction, pt.getId()));
                 }
             } else { // Shooting
                 pt.setShooting(pt.ReduceShotDelay());
@@ -688,7 +688,7 @@ public class Board {
                             x = 0;
                             y = 0;
                         }
-                        MovingTilesToAdd.offer(new Bullet(et.IX, et.IY, x, y, et.Direction, 0));
+                        MovingTilesToAdd.offer(new Bullet(et.IX, et.IY, x, y, et.Direction, et.getId()));
 
                     }
 
