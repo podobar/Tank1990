@@ -2,7 +2,8 @@ package sample;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.util.Pair;
+
+import sample.Controllers.GameViewController;
 
 import java.io.File;
 import java.util.*;
@@ -12,7 +13,10 @@ public class Board {
     @SuppressWarnings("WeakerAccess")
     public static Tile[][] Map;
     public static PlayerTank[] players = new PlayerTank[2];
+
+    public static boolean enemiesKilled=false;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+
     private List<MovingTile> MovingTiles;   // Tanks, enemies and bullets
     private List<Bullet> Bullets;
     private List<PlayerTank> Players;
@@ -314,7 +318,11 @@ public class Board {
 //                            Some second version to check collisions with walls, etc.?
                             if (b.CheckCollision(bulletSize, i * TileMeasurement, j * TileMeasurement, TileMeasurement)) {
                                 // TODO: after collision, what happens with tile.
-                                if (Map[i][j].IsDestroyed()) {
+                                if(Map[i][j].IsDestroyed()) {
+                                    if(i == Width / 2 && j == Height - 2){
+                                        players[0].setLives(0);
+                                        players[1].setLives(0);
+                                    }
                                     Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
                                 }
 
@@ -336,6 +344,9 @@ public class Board {
     }
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
+        if(Enemies.isEmpty()) /*&& Stack<EnemyTank>EnemiesToSpawn.isEmpty()*/{
+            enemiesKilled=true;
+        }
         CheckCollisions();
         if (EnemyAddTimer <= 0 && Enemies.size() < EnemiesLimit && EnemiesOverallLimit > 0) {
             Pair<Integer, Integer> spawn = Spawns.get(r.nextInt(Spawns.size()));

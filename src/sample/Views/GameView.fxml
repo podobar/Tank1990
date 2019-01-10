@@ -10,7 +10,7 @@
       fx:controller="sample.Controllers.GameViewController"
       style="-fx-background-color: black;">
     <Canvas fx:id="canvas"  height="512" width="800"/>
-    <VBox fx:id="menu" spacing="20" minHeight="512" style="-fx-background-color: grey;" alignment="center">
+    <VBox fx:id="menu" spacing="20" minHeight="512" style="-fx-background-color: grey;" alignment="TOP_CENTER">
         <HBox fx:id="enemyBox" minHeight="150" minWidth="180" style="-fx-background-color: pink"/>
         <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: yellow; -fx-padding: 20px">
             <Label text="Player 1"/>
@@ -22,6 +22,6 @@
             <Label fx:id="player2LivesLabel" text="Lives: "/>
             <Label fx:id="player2ScoreLabel" text="Score: "/>
         </VBox>
-        <Button fx:id="endGameButton" minHeight="50" minWidth="100" text="Go to credits" onMouseClicked="#EndGame" />
+        <Button fx:id="endGameButton" minHeight="50" minWidth="100" text="Go to credits" managed="false" onMouseClicked="#EndGame" />
     </VBox>
 </HBox>

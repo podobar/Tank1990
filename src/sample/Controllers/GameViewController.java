@@ -15,6 +15,7 @@ import javafx.scene.text.Font;
 import sample.Board;
 import sample.Main;
 
+import static sample.Board.enemiesKilled;
 import static sample.Board.players;
 
 
@@ -45,12 +46,18 @@ public class GameViewController {
                         player2ScoreLabel.setText("Score: " + players[1].getScore());
                         if(players[0].getLives()==0 && players[1].getLives()==0)
                         {
+                            endGameButton.setManaged(true);
                             gc.setFill(Color.RED);
                             gc.setFont(new Font("Calibri",50));
-                            gc.fillText("GAME OVER",269,200);
+                            gc.fillText("GAME OVER",270,200);
+                        }
+                        else if(enemiesKilled){
+                            endGameButton.setManaged(true);
+                            gc.setFill(Color.YELLOW);
+                            gc.setFont(new Font("Calibri",50));
+                            gc.fillText("VICTORY!",300,200);
                         }
                         else{
-
                             gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                             BattleField.UpdateBoard(Main.input, gc);
                         }
