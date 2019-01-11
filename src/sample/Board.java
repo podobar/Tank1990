@@ -3,6 +3,7 @@ package sample;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+import javafx.util.Pair;
 import sample.Controllers.GameViewController;
 
 import java.io.File;
@@ -85,8 +86,6 @@ public class Board {
 
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
-
-
                 if (i == Width / 2 && j == Height - 2) {
                     //Eagle
                     Map[i][j] = new PlainTile(
@@ -118,7 +117,7 @@ public class Board {
                             true,
                             3
                     );
-                else if (j == 3 && i >= 10 && i <= 14) {
+                else if((j==2 && i<=22 && i>=2) || (j == 3 && i >= 10 && i <= 14 ) || ((i==2 || i==Width-3) && j>=4 && j<=8) || (j%6 ==5 && i%3 ==0) ||(j==11 && (i==4 || i==5 ||i ==19 ||i==20)))
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
                             new Image[]{new Image(new File("Resources/Terrain/indestructible.png").toURI().toString())},
@@ -126,7 +125,7 @@ public class Board {
                             false,
                             1
                     );
-                } else
+                else
                     Map[i][j] = new PlainTile(i * TileMeasurement, j * TileMeasurement);
             }
         //noinspection IntegerDivisionInFloatingPointContext
@@ -274,7 +273,6 @@ public class Board {
                     if (b.getOwnerId() != pt.getId())
                         if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
                             // TODO: reacting correctly to being shot (e.g. updating hp), it's something to talk about
-                            // TODO: BUG when one player is destroyed, enemy is shooting into the wall (but he wants to kill us) but then phew! Lots of exceptions
                             //noinspection StatementWithEmptyBody
                             if (pt.stamina == 0) {
                                 pt.setLives(pt.getLives() - 1);
@@ -344,7 +342,7 @@ public class Board {
     }
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
-        if(Enemies.isEmpty()) /*&& Stack<EnemyTank>EnemiesToSpawn.isEmpty()*/{
+        if(Enemies.isEmpty() && EnemiesOverallLimit==0) /*&& Stack<EnemyTank>EnemiesToSpawn.isEmpty()*/{
             enemiesKilled=true;
         }
         CheckCollisions();

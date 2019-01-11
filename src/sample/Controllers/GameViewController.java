@@ -49,13 +49,13 @@ public class GameViewController {
                             endGameButton.setManaged(true);
                             gc.setFill(Color.RED);
                             gc.setFont(new Font("Calibri",50));
-                            gc.fillText("GAME OVER",270,200);
+                            gc.fillText("GAME OVER",270,300);
                         }
                         else if(enemiesKilled){
                             endGameButton.setManaged(true);
                             gc.setFill(Color.YELLOW);
                             gc.setFont(new Font("Calibri",50));
-                            gc.fillText("VICTORY!",300,200);
+                            gc.fillText("VICTORY!",300,300);
                         }
                         else{
                             gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

@@ -90,7 +90,7 @@ public class EnemyTank extends Tank {
                 } else //eagle.IX > IX
                 {
                     for (int i = IX + 1; i < eagle.IX; ++i)
-                        if (!Board.Map[i][IY].CanBeDestroyed == false)
+                        if (Board.Map[i][IY].CanBeDestroyed == false)
                             return false;
                     texture = TextureRight[0];
                     Direction = "RIGHT";

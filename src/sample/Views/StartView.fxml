@@ -17,10 +17,10 @@
     <Label text="Tank 1990: Rebirth"/>
     <Label text="From authors: "/>
     <VBox alignment="CENTER">
-        <Label text="Wróg jest niczym armia czerwona - nie zważa na kamratów z drużyny, jest niepowstrzymana i ma jeden cel - zniszczyć orła."/>
+        <Label text="Wróg jest niczym Armia Czerwona – nie zważa na kamratów z drużyny, jest niepowstrzymana i ma jeden cel – zniszczyć orła."/>
         <Label text="Kolejne fale wrogów zalewają nasze terytorium..."/>
         <Label text="Ojczyzna Cię potrzebuje!"/>
-        <Label text="Ciebie i jeśli chcesz - Twojego towarzysza przygody."/>
+        <Label text="Ciebie i jeśli chcesz – Twojego towarzysza przygody."/>
         <Label text="Stawcie czoła niebezpieczeństwu już teraz!"/>
     </VBox>
 
