@@ -29,13 +29,15 @@ public class GameViewController {
     @FXML
     Canvas canvas;
     @FXML
-    Button endGameButton;
+    Button endGameButton,resetGameButton;
+    private Board BattleField;
+    private boolean isRunning=true;
 
     public static AnimationTimer timer;
     public void initialize() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         int TileMeasurement = (int) canvas.getHeight() / 16; //each box is 32x32p2
-        Board BattleField = new Board((int) canvas.getWidth() / TileMeasurement, (int)canvas.getHeight() / TileMeasurement, TileMeasurement);
+        BattleField = new Board((int) canvas.getWidth() / TileMeasurement, (int)canvas.getHeight() / TileMeasurement, TileMeasurement);
         BattleField.GenerateMap();
         timer =
                 new AnimationTimer() {
@@ -69,6 +71,27 @@ public class GameViewController {
         Main.root.getChildren().remove(0);
         timer.stop();
         Main.root.getChildren().add(sample.Main.views.get(1));
+    }
+    @FXML
+    private void ResetGame(MouseEvent e){
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        int TileMeasurement = (int) canvas.getHeight() / 16; //each box is 32x32px
+        BattleField = new Board((int) canvas.getWidth() / TileMeasurement, (int)canvas.getHeight() / TileMeasurement, TileMeasurement);
+        BattleField.GenerateMap();
+        timer.start();
+    }
+    @FXML
+    private void PauseGame(MouseEvent e){
+        if(isRunning){
+            timer.stop();
+            isRunning=false;
+        }
+
+        else{
+            timer.start();
+            isRunning=true;
+        }
+
     }
 
 

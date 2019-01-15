@@ -61,7 +61,10 @@ public class Board {
     }
 
     private Tile getTile(int i, int j) {
-        return Map[i][j];
+        if(i>=0 && j>=0 &&i<Width && j<Height)
+            return Map[i][j];
+        else
+            return Map[0][0];
     }
 
     // Add checking whether some MovingTile isn't on Tile (collisions)
