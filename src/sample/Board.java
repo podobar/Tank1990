@@ -14,6 +14,7 @@ public class Board {
     @SuppressWarnings("WeakerAccess")
     public static Tile[][] Map;
     public static PlayerTank[] players = new PlayerTank[2];
+    public static Queue<EnemyTank> EnemiesToAdd = new LinkedList<>();
 
     public static boolean enemiesKilled=false;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -210,6 +211,22 @@ public class Board {
         EnemiesOverallLimit--;
         Enemies.add(testEnemy3);
         EnemiesOverallLimit--;
+
+        for(int i = 0; i < EnemiesOverallLimit; i++){
+            Pair<Integer, Integer> spawn = Spawns.get(r.nextInt(Spawns.size()));
+            int iX = spawn.getKey(), iY = spawn.getValue();
+            EnemiesToAdd.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
+                    new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
+                            new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
+                    500));
+        }
+
         //Eventually enemies on map will be limited to max 6,
     }
 
@@ -275,14 +292,13 @@ public class Board {
                 for (PlayerTank pt : Players) {
                     if (b.getOwnerId() != pt.getId())
                         if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
-                            // TODO: reacting correctly to being shot (e.g. updating hp), it's something to talk about
-                            //noinspection StatementWithEmptyBody
                             if (pt.stamina == 0) {
                                 pt.setLives(pt.getLives() - 1);
                                 pt.IX = -1;
                                 pt.IY = -1;
+                                pt.setX(-1);
+                                pt.setY(-1);
 
-                                //TODO: Respawn (checking if respawn field is empty, what if isn't?)
                                 pt.Explode(ExplosionImage);
                                 ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
                                 MovingTilesToDel.offer(pt);
@@ -320,7 +336,6 @@ public class Board {
                         if (!Map[i][j].CanShotThrough)
 //                            Some second version to check collisions with walls, etc.?
                             if (b.CheckCollision(bulletSize, i * TileMeasurement, j * TileMeasurement, TileMeasurement)) {
-                                // TODO: after collision, what happens with tile.
                                 if(Map[i][j].IsDestroyed()) {
                                     if(i == Width / 2 && j == Height - 2){
                                         players[0].setLives(0);
@@ -353,18 +368,8 @@ public class Board {
         }
         CheckCollisions();
         if (EnemyAddTimer <= 0 && Enemies.size() < EnemiesLimit && EnemiesOverallLimit > 0) {
-            Pair<Integer, Integer> spawn = Spawns.get(r.nextInt(Spawns.size()));
-            int iX = spawn.getKey(), iY = spawn.getValue();
-            Enemies.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
-                    500));
+            if(!EnemiesToAdd.isEmpty())
+                Enemies.add(EnemiesToAdd.poll());
             EnemyAddTimer = 180;
             EnemiesOverallLimit--;
         } else {
@@ -384,7 +389,6 @@ public class Board {
         }
 
         ExplodingTanks.removeIf(explodingTank -> {
-            // TODO: it's probably place to implement player tanks respawn
             if(explodingTank.getValue() <=0)
                 if(explodingTank.getKey() instanceof PlayerTank) {
                     PlayerTank pt = (PlayerTank) explodingTank.getKey();
@@ -404,6 +408,7 @@ public class Board {
                         pt.stamina = 2;
 
                         pt.texture = pt.TextureUp[0];
+                        pt.Direction = "UP";
                         Players.add(pt);
                     }
                 }
@@ -633,7 +638,6 @@ public class Board {
         for (EnemyTank et : Enemies) {
             int TextureChangeTime = (int) (15 / et.getSpeed());
 
-            // TODO: Enemies movement
             boolean worthShooting = et.MakeMove();
             if (!et.IsMoving) {
                 switch (et.Direction) {
@@ -750,7 +754,6 @@ public class Board {
 
             if (!et.isShooting())     // Not shooting
             {
-                // TODO: Enemy shooting
                 if (worthShooting)     // Add Controls to Tank?
                 {
                     et.setShooting(true);
@@ -794,15 +797,7 @@ public class Board {
         }
 
         while (!MovingTilesToAdd.isEmpty()) {
-
-            // TODO: Change adding with Board.AddMovingTile(MovingTilesToAdd.poll()) ?
-//            MovingTile mt = MovingTilesToAdd.poll();
-//            if(mt instanceof Bullet)
-//                Bullets.add((Bullet)mt);
-//            else if (mt instanceof EnemyTank)
-//                Enemies.add((EnemyTank)mt);
             AddMovingTile(MovingTilesToAdd.poll());
-            // TODO: Will there be any other MovingTiles?
         }
     }
 }

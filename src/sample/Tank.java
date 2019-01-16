@@ -67,6 +67,10 @@ abstract public class Tank extends MovingTile {
         ShotDelay = (int) (60 / attackSpeed);
     }
 
+    public Image getDefaultTexture(){
+        return TextureUp[0];
+    }
+
     // False when delay has ended.
     public boolean ReduceShotDelay() {
         ShotDelay--;
