@@ -296,8 +296,6 @@ public class Board {
                                 pt.setLives(pt.getLives() - 1);
                                 pt.IX = -1;
                                 pt.IY = -1;
-                                pt.setX(-1);
-                                pt.setY(-1);
 
                                 pt.Explode(ExplosionImage);
                                 ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
@@ -423,6 +421,7 @@ public class Board {
             }
             int TextureChangeTime = (int) (15 / pt.getSpeed());
             if (!pt.IsMoving) {
+                // TODO: Players tanks position after Game Over.
                 // It enforces movement priorities - e.g. when you're pressing Left and then press Up or Down, then next move will be Up or Down. (Up > Down > Left > Right)
                 if (input.contains(pt.getControl(0))) {
 
