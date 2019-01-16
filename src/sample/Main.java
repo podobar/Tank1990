@@ -30,6 +30,7 @@ public class Main extends Application {
         Scene theScene = new Scene(root);
 
         primaryStage.setScene(theScene);
+        primaryStage.setResizable(false);
         game.setOnKeyReleased(e -> {
             String code = e.getCode().toString();
             if (input.contains(code))

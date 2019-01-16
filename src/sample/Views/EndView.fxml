@@ -12,5 +12,6 @@
         <Label text="Inspired by historical events."/>
         <Label text="This work of fiction was designed, developed and produced by a monocultural team of the same slavic origin."/>
         <Label text="Tank, bullets and explosions textures: zironid_n (opengameart.org)"/>
+        <Label text="Special thanks to Nokia and LunaPic"/>
     </VBox>
 </HBox>

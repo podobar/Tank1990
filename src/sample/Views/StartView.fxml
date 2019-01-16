@@ -12,9 +12,8 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="sample.Controllers.StartViewController"
-      minHeight="512" minWidth="980" alignment="center" spacing="20" >
+      minHeight="500" minWidth="968" alignment="center" spacing="20" >
 
-    <Label text="Tank 1990: Rebirth"/>
     <Label text="From authors: "/>
     <VBox alignment="CENTER">
         <Label text="Wróg jest niczym Armia Czerwona – nie zważa na kamratów z drużyny, jest niepowstrzymana i ma jeden cel – zniszczyć orła."/>

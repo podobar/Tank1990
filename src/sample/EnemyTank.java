@@ -10,7 +10,6 @@ import java.util.Stack;
 public class EnemyTank extends Tank {
     //Enemy tanks (AI) knows where Board.players and eagle are.
     //AI tries to either destroy eagle, or kill Board.players when it's possible
-    //TODO: change w,h into board.getWidth(), board.getHeight() -> avoid hardcoding
     int w = 25;
     int h = 16;
     Tile eagle = new PlainTile(12, 14);
@@ -24,6 +23,7 @@ public class EnemyTank extends Tank {
 
     public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight, int reward) {
         super(iX, iY, x, y, texturesUp, texturesDown, texturesLeft, texturesRight);
+        this.reward=reward;
         CreatePath();
     }
 

@@ -87,7 +87,6 @@ public class GameViewController {
             isRunning=false;
             pauseGameButton.setText("Resume");
         }
-
         else{
             timer.start();
             isRunning=true;

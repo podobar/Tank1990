@@ -133,8 +133,8 @@ public class Board {
             }
         //noinspection IntegerDivisionInFloatingPointContext
         players[0] = new PlayerTank(
-                Width / 2 - 2, Height - 2,
-                (Width / 2 - 2) * TileMeasurement, (Height - 2) * TileMeasurement,
+                Width / 2 - 2, Height - 1,
+                (Width / 2 - 2) * TileMeasurement, (Height - 1) * TileMeasurement,
                 new Image[]{new Image(new File("Resources/Tanks/Green/up1.png").toURI().toString()),
                         new Image(new File("Resources/Tanks/Green/up2.png").toURI().toString())},
                 new Image[]{new Image(new File("Resources/Tanks/Green/down1.png").toURI().toString()),

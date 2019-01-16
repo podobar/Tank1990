@@ -11,7 +11,7 @@
       style="-fx-background-color: black;">
     <Canvas fx:id="canvas"  height="512" width="800"/>
     <VBox fx:id="menu" spacing="10" minHeight="512" style="-fx-background-color: grey;" alignment="TOP_CENTER">
-        <HBox fx:id="enemyBox" minHeight="150" minWidth="180" style="-fx-background-color: pink"/>
+        <HBox fx:id="enemyBox" minHeight="130" minWidth="180" style="-fx-background-color: pink"/>
         <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: yellow; -fx-padding: 20px">
             <Label text="Player 1"/>
             <Label fx:id="player1LivesLabel" text="Lives: "/>
