@@ -14,6 +14,7 @@ public class PlayerTank extends Tank {
         score = 0;
         this.lives = lives;
         attackSpeed = 1;
+        stamina = 2;
     }
 
     public int getScore() {
@@ -38,6 +39,14 @@ public class PlayerTank extends Tank {
 
         // Exception to throw?
         return "IndexOutOfBound";
+    }
+
+    public void setX(double x){
+        X = x;
+    }
+
+    public void setY(double y){
+        Y = y;
     }
 }
 

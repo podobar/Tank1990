@@ -77,7 +77,7 @@ public class Board {
 
         Spawns = new LinkedList<>();
         Spawns.add(new Pair<>(1, 1));
-        Spawns.add(new Pair<>(13, 1));
+        Spawns.add(new Pair<>(11, 1));
         Spawns.add(new Pair<>(23, 1));
 
         //MapTile
@@ -144,7 +144,7 @@ public class Board {
                 new Image[]{new Image(new File("Resources/Tanks/Green/right1.png").toURI().toString()),
                         new Image(new File("Resources/Tanks/Green/right2.png").toURI().toString())},
                 new String[]{"UP", "DOWN", "LEFT", "RIGHT", "SLASH"},
-                1
+                3
         );
         //noinspection IntegerDivisionInFloatingPointContext
         players[1] = new PlayerTank(
@@ -159,7 +159,7 @@ public class Board {
                 new Image[]{new Image(new File("Resources/Tanks/Blue/right1.png").toURI().toString()),
                         new Image(new File("Resources/Tanks/Blue/right2.png").toURI().toString())},
                 new String[]{"W", "S", "A", "D", "G"},
-                1
+                3
         );
 
         Players.add(players[0]);
@@ -281,14 +281,16 @@ public class Board {
                                 pt.setLives(pt.getLives() - 1);
                                 pt.IX = -1;
                                 pt.IY = -1;
-                            } else {
+
                                 //TODO: Respawn (checking if respawn field is empty, what if isn't?)
+                                pt.Explode(ExplosionImage);
+                                ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
+                                MovingTilesToDel.offer(pt);
+                            } else {
+                                pt.stamina--;
                             }
 
-                            pt.Explode(ExplosionImage);
                             MovingTilesToDel.offer(b);
-                            ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
-                            MovingTilesToDel.offer(pt);
                         }
                 }
 
@@ -342,6 +344,7 @@ public class Board {
         ) {
             DelMovingTile(mt);
         }
+        MovingTilesToDel.clear();
     }
 
     public void UpdateBoard(ArrayList<String> input, GraphicsContext gc) {
@@ -382,6 +385,28 @@ public class Board {
 
         ExplodingTanks.removeIf(explodingTank -> {
             // TODO: it's probably place to implement player tanks respawn
+            if(explodingTank.getValue() <=0)
+                if(explodingTank.getKey() instanceof PlayerTank) {
+                    PlayerTank pt = (PlayerTank) explodingTank.getKey();
+                    if (pt.getLives() > 0) {
+                        if (pt.getId() == players[0].getId()) {
+                            pt.IX = 10;
+                        } else {
+                            pt.IX = 14;
+                        }
+                        pt.IY = 15;
+                        pt.setX(TileMeasurement * pt.IX);
+                        pt.setY(TileMeasurement * pt.IY);
+
+                        pt.setShooting(false);
+                        pt.IsMoving = false;
+
+                        pt.stamina = 2;
+
+                        pt.texture = pt.TextureUp[0];
+                        Players.add(pt);
+                    }
+                }
             return explodingTank.getValue() <= 0;
         });
 
@@ -541,6 +566,7 @@ public class Board {
                 }
             } else { // Shooting
                 pt.setShooting(pt.ReduceShotDelay());
+
             }
             gc.drawImage(pt.texture, pt.X, pt.Y, TileMeasurement, TileMeasurement);
         }
