@@ -29,7 +29,7 @@ public class GameViewController {
     @FXML
     Canvas canvas;
     @FXML
-    Button endGameButton,resetGameButton;
+    Button endGameButton,resetGameButton,pauseGameButton;
     private Board BattleField;
     private boolean isRunning=true;
 
@@ -85,11 +85,13 @@ public class GameViewController {
         if(isRunning){
             timer.stop();
             isRunning=false;
+            pauseGameButton.setText("Resume");
         }
 
         else{
             timer.start();
             isRunning=true;
+            pauseGameButton.setText("Pause");
         }
 
     }

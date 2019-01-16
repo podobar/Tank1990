@@ -19,11 +19,11 @@
         </VBox>
         <VBox fx:id="player2Box" minHeight="100" minWidth="180"  style="-fx-background-color: yellow; -fx-padding: 20px;">
             <Label text="Player 2" textAlignment="center"/>
-            <Label fx:id="player2LivesLabel" text="Lives: "/>
-            <Label fx:id="player2ScoreLabel" text="Score: "/>
+            <Label fx:id="player2LivesLabel"/>
+            <Label fx:id="player2ScoreLabel"/>
         </VBox>
-        <Button fx:id="endGameButton" minHeight="30" minWidth="100" text="Go to credits" managed="false" onMouseClicked="#EndGame" />
         <Button fx:id="resetGameButton" minHeight="30" minWidth="100" text="Reset" onMouseClicked="#ResetGame" />
         <Button fx:id="pauseGameButton" minHeight="30" minWidth="100" text="Pause" onMouseClicked="#PauseGame" />
+        <Button fx:id="endGameButton" minHeight="30" minWidth="100" text="Go to credits" managed="false" onMouseClicked="#EndGame" />
     </VBox>
 </HBox>
