@@ -83,7 +83,6 @@ public class GameViewController {
     @FXML
     private void PauseGame(MouseEvent e){
         if(isRunning){
-
             timer.stop();
             isRunning=false;
             pauseGameButton.setText("Resume");
