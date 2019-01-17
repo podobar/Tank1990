@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import javafx.util.Pair;
-import sample.Controllers.GameViewController;
 
 import java.io.File;
 import java.util.*;
@@ -26,7 +25,6 @@ public class Board {
     private Queue<MovingTile> MovingTilesToAdd;
     private Queue<MovingTile> MovingTilesToDel;
     private Queue<AbstractMap.SimpleEntry<Tank, Integer>> ExplodingTanks;
-    private List<Pair<Integer, Integer>> Spawns;
     private int Width;
     private int Height;
     private int TileMeasurement;
@@ -76,10 +74,10 @@ public class Board {
         MovingTilesToDel = new LinkedList<>();
         ExplodingTanks = new LinkedList<>();
 
-        Spawns = new LinkedList<>();
-        Spawns.add(new Pair<>(1, 1));
-        Spawns.add(new Pair<>(11, 1));
-        Spawns.add(new Pair<>(23, 1));
+        List<Pair<Integer, Integer>> spawns = new LinkedList<>();
+        spawns.add(new Pair<>(1, 1));
+        spawns.add(new Pair<>(11, 1));
+        spawns.add(new Pair<>(23, 1));
 
         //MapTile
         Map = new Tile[Width][Height];
@@ -91,17 +89,17 @@ public class Board {
         for (int i = 0; i < Width; i++)
             for (int j = 0; j < Height; j++) {
                 if (i == Width / 2 && j == Height - 2) {
-                    //Eagle
+                    // Eagle
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
-                            new Image[]{new Image(new File("Resources/Eagle/eagle.jpg").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Eagle/eagle4.jpg").toURI().toString())},
                             false,
                             true,
                             1
                     );
                 } else if (((i == Width / 2 - 1 || i == Width / 2 || i == Width / 2 + 1) && j == Height - 3)
                         || ((i == Width / 2 - 1 || i == Width / 2 + 1) && j == Height - 2)) {
-                    //Bricks around the eagle
+                    // Bricks around the eagle
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
                             new Image[]{new Image(new File("Resources/Terrain/bricks3.jpg").toURI().toString()),
@@ -111,17 +109,26 @@ public class Board {
                             true,
                             3
                     );
-                } else if (i == 0 || i == Map.length - 1 || j == 0 || j == Map[i].length - 1)
-                    Map[i][j] = new PlainTile(
-                            i * TileMeasurement, j * TileMeasurement,
-                            new Image[]{new Image(new File("Resources/Terrain/bricks3.jpg").toURI().toString()),
-                                    new Image(new File("Resources/Terrain/bricks2.jpg").toURI().toString()),
-                                    new Image(new File("Resources/Terrain/bricks1.jpg").toURI().toString())},
-                            false,
-                            true,
-                            3
-                    );
-                else if((j==2 && i<=22 && i>=2) || (j == 3 && i >= 10 && i <= 14 ) || ((i==2 || i==Width-3) && j>=4 && j<=8) || (j%6 ==5 && i%3 ==0) ||(j==11 && (i==4 || i==5 ||i ==19 ||i==20)))
+                } else if (i == 0 || i == Width - 1 || j == 0 || j == Height - 1)
+                    if (j == Height - 1 && (i == Width / 2 - 2 || i == Width / 2 + 2))
+                        Map[i][j] = new PlainTile(
+                                i * TileMeasurement, j * TileMeasurement,
+                                new Image[]{new Image(new File("Resources/Terrain/indestructible.png").toURI().toString())},
+                                false,
+                                false,
+                                1
+                        );
+                    else
+                        Map[i][j] = new PlainTile(
+                                i * TileMeasurement, j * TileMeasurement,
+                                new Image[]{new Image(new File("Resources/Terrain/bricks3.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks2.jpg").toURI().toString()),
+                                        new Image(new File("Resources/Terrain/bricks1.jpg").toURI().toString())},
+                                false,
+                                true,
+                                3
+                        );
+                else if ((j == 2 && i <= 22 && i >= 2) || (j == 3 && i >= 10 && i <= 14) || ((i == 2 || i == Width - 3) && j >= 4 && j <= 8) || (j % 6 == 5 && i % 3 == 0) || (j == 11 && (i == 4 || i == 5 || i == 19 || i == 20)))
                     Map[i][j] = new PlainTile(
                             i * TileMeasurement, j * TileMeasurement,
                             new Image[]{new Image(new File("Resources/Terrain/indestructible.png").toURI().toString())},
@@ -169,41 +176,41 @@ public class Board {
         EnemyTank testEnemy =
                 new EnemyTank(1, 1,
                         TileMeasurement, TileMeasurement,
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString()),},
-                        500
+                        new Image[]{new Image(new File("Resources/Tanks/Red/up1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/up2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/down1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/down2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/left1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/left2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/right1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/right2.png").toURI().toString())},
+                        500, 3, 2, 1
                 );
         EnemyTank testEnemy2 =
                 new EnemyTank(23, 1,
                         TileMeasurement * 23, TileMeasurement,
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
-                        500
+                        new Image[]{new Image(new File("Resources/Tanks/Red/up1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/up2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/down1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/down2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/left1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/left2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/right1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/right2.png").toURI().toString())},
+                        500, 3, 2, 1
                 );
         EnemyTank testEnemy3 =
                 new EnemyTank(14, 1,
                         TileMeasurement * 14, TileMeasurement,
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
-                        new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
-                                new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
-                        500
+                        new Image[]{new Image(new File("Resources/Tanks/Red/up1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/up2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/down1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/down2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/left1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/left2.png").toURI().toString())},
+                        new Image[]{new Image(new File("Resources/Tanks/Red/right1.png").toURI().toString()),
+                                new Image(new File("Resources/Tanks/Red/right2.png").toURI().toString())},
+                        500, 3, 2, 1
                 );
         Enemies.add(testEnemy);
         EnemiesOverallLimit--;
@@ -213,18 +220,63 @@ public class Board {
         EnemiesOverallLimit--;
 
         for(int i = 0; i < EnemiesOverallLimit; i++){
-            Pair<Integer, Integer> spawn = Spawns.get(r.nextInt(Spawns.size()));
+            Pair<Integer, Integer> spawn = spawns.get(r.nextInt(spawns.size()));
             int iX = spawn.getKey(), iY = spawn.getValue();
-            EnemiesToAdd.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
-                    new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
-                            new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
-                    500));
+            switch(r.nextInt(4)) {
+                // TODO: Change other enemies textures
+                // TODO: Reset in case of Victory (doesn't work?)
+                case 0: // Plain enemy
+                    EnemiesToAdd.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Tanks/Red/up1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Red/up2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Red/down1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Red/down2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Red/left1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Red/left2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Red/right1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Red/right2.png").toURI().toString())},
+                            500, 3, 2, 2));
+                    break;
+
+                case 1: // Faster movement, normal shooting, low stamina
+                    EnemiesToAdd.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Tanks/Yellow/up1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Yellow/up2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Yellow/down1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Yellow/down2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Yellow/left1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Yellow/left2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Yellow/right1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Yellow/right2.png").toURI().toString())},
+                            500, 5, 2, 1));
+                    break;
+
+                case 2: // Slow movement, fast shooting, low stamina
+                    EnemiesToAdd.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Tanks/Blue/up1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Blue/up2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Blue/down1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Blue/down2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Blue/left1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Blue/left2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Blue/right1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Blue/right2.png").toURI().toString())},
+                            500, 2, 4, 1));
+                    break;
+
+                case 3: // Uber-enemy: fast & furious
+                    EnemiesToAdd.add(new EnemyTank(iX, iY, iX * TileMeasurement, iY * TileMeasurement,
+                            new Image[]{new Image(new File("Resources/Tanks/Soviet/up1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Soviet/up2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Soviet/down1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Soviet/down2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Soviet/left1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Soviet/left2.png").toURI().toString())},
+                            new Image[]{new Image(new File("Resources/Tanks/Soviet/right1.png").toURI().toString()),
+                                    new Image(new File("Resources/Tanks/Soviet/right2.png").toURI().toString())},
+                            500, 3, 5, 5));
+                    break;
+            }
         }
 
         //Eventually enemies on map will be limited to max 6,
@@ -292,7 +344,7 @@ public class Board {
                 for (PlayerTank pt : Players) {
                     if (b.getOwnerId() != pt.getId())
                         if (b.CheckCollision(bulletSize, pt.getX(), pt.getY(), tankSize)) {
-                            if (pt.stamina == 0) {
+                            if (--pt.stamina <= 0) {
                                 pt.setLives(pt.getLives() - 1);
                                 pt.IX = -1;
                                 pt.IY = -1;
@@ -300,8 +352,6 @@ public class Board {
                                 pt.Explode(ExplosionImage);
                                 ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(pt, ExplosionTime));
                                 MovingTilesToDel.offer(pt);
-                            } else {
-                                pt.stamina--;
                             }
 
                             MovingTilesToDel.offer(b);
@@ -311,14 +361,16 @@ public class Board {
                 for (EnemyTank et : Enemies) {
                     if (b.getOwnerId() != et.getId())
                         if (b.CheckCollision(bulletSize, et.getX(), et.getY(), tankSize) && et.IsDestroyed()) {
-//                            players[b.getOwnerId()-1].addScore(500);
-                            for (PlayerTank player : players)
-                                if (player.getId() == b.getOwnerId())
-                                    player.addScore(500);
-                            et.Explode(ExplosionImage);
+                            if (--et.stamina <= 0) {
+                                for (PlayerTank player : players)
+                                    if (player.getId() == b.getOwnerId())
+                                        player.addScore(500);
+                                et.Explode(ExplosionImage);
+                                ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(et, ExplosionTime));
+                                MovingTilesToDel.offer(et);
+                            }
+
                             MovingTilesToDel.offer(b);
-                            ExplodingTanks.offer(new AbstractMap.SimpleEntry<>(et, ExplosionTime));
-                            MovingTilesToDel.offer(et);
                         }
                 }
 
@@ -402,6 +454,8 @@ public class Board {
 
                         pt.setShooting(false);
                         pt.IsMoving = false;
+                        pt.CanMoveThrough = false;
+                        pt.CanShotThrough = false;
 
                         pt.stamina = 2;
 

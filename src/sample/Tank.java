@@ -64,7 +64,7 @@ abstract public class Tank extends MovingTile {
     }
 
     public void ShotDelay() {
-        ShotDelay = (int) (60 / attackSpeed);
+        ShotDelay = (int) (120 / attackSpeed);
     }
 
     public Image getDefaultTexture(){
@@ -81,6 +81,8 @@ abstract public class Tank extends MovingTile {
 
     public void Explode(Image ExplosionImage) {
         texture = ExplosionImage;
+        CanMoveThrough = true;
+        CanShotThrough = true;
         //IsMoving = false;
     }
 }

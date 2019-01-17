@@ -51,7 +51,7 @@ public class GameViewController {
                         EnemyTank[] ets = EnemiesToAdd.toArray(new EnemyTank[0]);
 
                         for(int i = 0; i < ets.length; i++) {
-                            enemyBox.add(new ImageView(ets[i].getDefaultTexture()), i % 3, i / 3);
+                            enemyBox.add(new ImageView(ets[ets.length - 1 - i].getDefaultTexture()), i % 4, i / 4);
                         }
 
                         player1LivesLabel.setText("Lives: " + players[0].getLives());

@@ -13,8 +13,9 @@ public class PlayerTank extends Tank {
         Controls = controls;
         score = 0;
         this.lives = lives;
-        attackSpeed = 1;
-        stamina = 2;
+        attackSpeed = 4;
+        speed = 4;
+        stamina = 3;
     }
 
     public int getScore() {

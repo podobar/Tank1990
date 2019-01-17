@@ -22,8 +22,12 @@ public class EnemyTank extends Tank {
         return reward;
     }
 
-    public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight, int reward) {
+    public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight, int reward, int _speed, int _attackSpeed, int _stamina) {
         super(iX, iY, x, y, texturesUp, texturesDown, texturesLeft, texturesRight);
+        this.reward = reward;
+        speed = _speed;
+        attackSpeed = _attackSpeed;
+        stamina = _stamina;
         CreatePath();
     }
 
