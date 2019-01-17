@@ -19,11 +19,11 @@ public abstract class Tile
     int IY;
 
     public int getIX() {
-        return IX/32;
+        return IX / 32;
     }
 
     public int getIY() {
-        return IY/32;
+        return IY / 32;
     }
 
     public abstract double getX();

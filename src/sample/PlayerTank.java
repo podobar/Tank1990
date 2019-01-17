@@ -13,7 +13,7 @@ public class PlayerTank extends Tank {
         Controls = controls;
         score = 0;
         this.lives = lives;
-        attackSpeed = 4;
+        attackSpeed = 3;
         speed = 4;
         stamina = 3;
     }

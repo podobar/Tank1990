@@ -12,5 +12,9 @@
         <Label text="Inspired by historical events."/>
         <Label text="This work of fiction was designed, developed and produced by a monocultural team of the same slavic origin."/>
         <Label text="Tank, bullets and explosions textures: zironid_n (opengameart.org)"/>
+        <Label text="Eagle texture:  Photo by Brett Sayles from Pexels.com"/>
+        <Label text="Indestructible tile (Nokia) texture:  Discostu at commons.Wikimedia.com"/>
+        <Label text="Joining two Nokia images together: https://www.imgonline.com.ua/eng/combine-two-images-into-one.php"/>
+        <Label text="Bricks: Metropolis Alabaster bricks at AustralBricks.com.au"/>
     </VBox>
 </HBox>

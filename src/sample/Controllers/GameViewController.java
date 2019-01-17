@@ -16,6 +16,8 @@ import sample.Board;
 import sample.EnemyTank;
 import sample.Main;
 
+import java.util.LinkedList;
+
 import static sample.Board.EnemiesToAdd;
 import static sample.Board.enemiesKilled;
 import static sample.Board.players;
@@ -86,6 +88,8 @@ public class GameViewController {
     @FXML
     private void ResetGame(MouseEvent e) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        enemiesKilled = false;
+        EnemiesToAdd = new LinkedList<>();
         int TileMeasurement = (int) canvas.getHeight() / 16; //each box is 32x32px
         BattleField = new Board((int) canvas.getWidth() / TileMeasurement, (int) canvas.getHeight() / TileMeasurement, TileMeasurement);
         BattleField.GenerateMap();
