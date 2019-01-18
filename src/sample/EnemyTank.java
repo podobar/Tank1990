@@ -4,13 +4,13 @@ import javafx.scene.image.Image;
 import javafx.util.Pair;
 
 import java.awt.*;
+import java.time.LocalTime;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class EnemyTank extends Tank {
     //Enemy tanks (AI) knows where Board.players and eagle are.
     //AI tries to either destroy eagle, or kill Board.players when it's possible
-    //TODO: change w,h into board.getWidth(), board.getHeight() -> avoid hardcoding
     int w = 25;
     int h = 16;
     Tile eagle = new PlainTile(12, 14);
@@ -43,7 +43,6 @@ public class EnemyTank extends Tank {
             } else {
                 Point nextTile = path.pop();
                 if (Math.abs(nextTile.x - IX) + Math.abs(nextTile.y - IY) > 1) {
-                    //Next move can't be performed, because it is "corner" move instead of "plus" move => Create new path
                     CreatePath();
                     if (path.isEmpty())
                         return false;
@@ -51,7 +50,6 @@ public class EnemyTank extends Tank {
                         nextTile = path.pop();
 
                 }
-                //TODO: Perhaps some shooting when moving into destructible wall?
                 if (nextTile.x == IX + 1) {
                     Direction = "RIGHT";
                     texture = TextureRight[0];
@@ -71,181 +69,180 @@ public class EnemyTank extends Tank {
     }
 
     private boolean CanShootToObjective() {
-        //TODO: Change texture when direction is changed
-        //If there is no indestructible terrain, friendly tanks between this tank and eagle ( this tank is in row || column of eagle) -> shoot eagle
-        if (Board.Map[eagle.IX][eagle.IY].stamina > 0) {
-            if (eagle.IX == IX) {
-                for (int i = IY + 1; i < eagle.IY; ++i) {
-                    if (Board.Map[IX][i].CanBeDestroyed == false)
-                        return false;
-                }
-                texture = TextureDown[0];
-                Direction = "DOWN";
-                return true;
-            } else if (eagle.IY == IY) {
-                if (eagle.IX < IX) {
-                    for (int i = IX - 1; i > eagle.IX; --i) {
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
+        LocalTime time = LocalTime.now();
+        switch( Math.abs(time.getNano()%60 * time.getSecond())%3){
+            case 0: //Shoot eagle if possible
+                if (Board.Map[eagle.IX][eagle.IY].stamina > 0) {
+                    if (eagle.IX == IX) {
+                        for (int i = IY + 1; i < eagle.IY; ++i) {
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        }
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else if (eagle.IY == IY) {
+                        if (eagle.IX < IX) {
+                            for (int i = IX - 1; i > eagle.IX; --i) {
+                                if (Board.Map[i][IY].CanBeDestroyed == false)
+                                    return false;
+                            }
+                            texture = TextureLeft[0];
+                            Direction = "LEFT";
+                            return true;
+                        } else //eagle.IX > IX
+                        {
+                            for (int i = IX + 1; i < eagle.IX; ++i)
+                                if (Board.Map[i][IY].CanBeDestroyed == false)
+                                    return false;
+                            texture = TextureRight[0];
+                            Direction = "RIGHT";
+                            return true;
+                        }
                     }
-                    texture = TextureLeft[0];
-                    Direction = "LEFT";
-                    return true;
-                } else //eagle.IX > IX
-                {
-                    for (int i = IX + 1; i < eagle.IX; ++i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureRight[0];
-                    Direction = "RIGHT";
-                    return true;
                 }
-            }
-        }
-        //If closest player is in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
-        //If there is another player (not closest one) in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
-        if (Math.sqrt(Math.pow(IX - Board.players[0].IX, 2) + Math.pow(IY - Board.players[0].IY, 2)) <= Math.sqrt(Math.pow(IX - Board.players[1].IX, 2) + Math.pow(IY - Board.players[1].IY, 2))) {
-            //Distance from P1 is smaller than from P2
-            if (Board.players[0].IX == IX) {
-                if (Board.players[0].IY > IY) { //player lower than enemy
-                    for (int i = IY + 1; i < Board.players[0].IY; ++i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureDown[0];
-                    Direction = "DOWN";
-                    return true;
-                } else { //player higher than enemy
-                    for (int i = IY - 1; i > Board.players[0].IY; --i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureUp[0];
-                    Direction = "UP";
-                    return true;
+                break;
+            case 1: //check for shooting ability into player 0 earlier than player 1
+                if (Board.players[0].IX == IX) {
+                    if (Board.players[0].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[0].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[0].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[0].IY == IY) {
+                    if (Board.players[0].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[0].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[0].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
                 }
-            } else if (Board.players[0].IY == IY) {
-                if (Board.players[0].IX < IX) { //player is on the left of the enemy
-                    for (int i = IX - 1; i > Board.players[0].IX; --i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureLeft[0];
-                    Direction = "LEFT";
-                    return true;
-                } else { //player is on the right of the enemy
-                    for (int i = IX + 1; i < Board.players[0].IX; ++i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureRight[0];
-                    Direction = "RIGHT";
-                    return true;
+                if (Board.players[1].IX == IX) {
+                    if (Board.players[1].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[1].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[1].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[1].IY == IY) {
+                    if (Board.players[1].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[1].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[1].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
                 }
-            }
-            if (Board.players[1].IX == IX) {
-                if (Board.players[1].IY > IY) { //player lower than enemy
-                    for (int i = IY + 1; i < Board.players[1].IY; ++i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureDown[0];
-                    Direction = "DOWN";
-                    return true;
-                } else { //player higher than enemy
-                    for (int i = IY - 1; i > Board.players[1].IY; --i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureUp[0];
-                    Direction = "UP";
-                    return true;
+                break;
+            case 2:
+                if (Board.players[1].IX == IX) {
+                    if (Board.players[1].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[0].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[1].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[1].IY == IY) {
+                    if (Board.players[1].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[1].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[1].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
                 }
-            } else if (Board.players[1].IY == IY) {
-                if (Board.players[1].IX < IX) { //player is on the left of the enemy
-                    for (int i = IX - 1; i > Board.players[1].IX; --i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureLeft[0];
-                    Direction = "LEFT";
-                    return true;
-                } else { //player is on the right of the enemy
-                    for (int i = IX + 1; i < Board.players[1].IX; ++i)
-                        if (Board.Map[i][IY].CanBeDestroyed)
-                            return false;
-                    texture = TextureRight[0];
-                    Direction = "RIGHT";
-                    return true;
+                if (Board.players[0].IX == IX) {
+                    if (Board.players[0].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[0].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[0].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[0].IY == IY) {
+                    if (Board.players[0].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[0].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[0].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
                 }
-            }
-        } else //Distance from P1 is higher than from P2
-        {
-            if (Board.players[1].IX == IX) {
-                if (Board.players[1].IY > IY) { //player lower than enemy
-                    for (int i = IY + 1; i < Board.players[0].IY; ++i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureDown[0];
-                    Direction = "DOWN";
-                    return true;
-                } else { //player higher than enemy
-                    for (int i = IY - 1; i > Board.players[1].IY; --i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureUp[0];
-                    Direction = "UP";
-                    return true;
-                }
-            } else if (Board.players[1].IY == IY) {
-                if (Board.players[1].IX < IX) { //player is on the left of the enemy
-                    for (int i = IX - 1; i > Board.players[1].IX; --i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureLeft[0];
-                    Direction = "LEFT";
-                    return true;
-                } else { //player is on the right of the enemy
-                    for (int i = IX + 1; i < Board.players[1].IX; ++i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureRight[0];
-                    Direction = "RIGHT";
-                    return true;
-                }
-            }
-            if (Board.players[0].IX == IX) {
-                if (Board.players[0].IY > IY) { //player lower than enemy
-                    for (int i = IY + 1; i < Board.players[0].IY; ++i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureDown[0];
-                    Direction = "DOWN";
-                    return true;
-                } else { //player higher than enemy
-                    for (int i = IY - 1; i > Board.players[0].IY; --i)
-                        if (Board.Map[IX][i].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureUp[0];
-                    Direction = "UP";
-                    return true;
-                }
-            } else if (Board.players[0].IY == IY) {
-                if (Board.players[0].IX < IX) { //player is on the left of the enemy
-                    for (int i = IX - 1; i > Board.players[0].IX; --i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureLeft[0];
-                    Direction = "LEFT";
-                    return true;
-                } else { //player is on the right of the enemy
-                    for (int i = IX + 1; i < Board.players[0].IX; ++i)
-                        if (Board.Map[i][IY].CanBeDestroyed == false)
-                            return false;
-                    texture = TextureRight[0];
-                    Direction = "RIGHT";
-                    return true;
-                }
-            }
+                break;
         }
         return false;
     }
 
     private void CreatePath() {
-        //TODO: Check why second enemy(right upper corner doesn't do what he's supposed to do (except for not changing texture when changing direction)) suddenly stops
         //Own implementation of A* algorithm, on start we have:
         // -IX, IY - tile coordinates,
         // -We know where the eagle and Board.players are,

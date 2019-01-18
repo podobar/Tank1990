@@ -22,8 +22,8 @@ public class StartViewController {
     private boolean twoPlayers=true;
     public void initialize()
     {
-        player2TankImage.setImage(new Image("Tanks/Blue/down1.png"));
-        player1TankImage.setImage(new Image("Tanks/Green/down1.png"));
+        player2TankImage.setImage(new Image("/Resources/Tanks/Yellow/down1.png"));
+        player1TankImage.setImage(new Image("/Resources/Tanks/Green/down1.png"));
     }
     @FXML
     private void startWithTwoPlayers(MouseEvent e){

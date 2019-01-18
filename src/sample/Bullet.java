@@ -39,7 +39,7 @@ public class Bullet extends MovingTile {
         IsMoving = true;
 
 //        texture = new Image((new File("Explosion1/1.png")).toURI().toString());
-        texture = new Image(new File("Resources/Explosion1/1.png").toURI().toString());
+        texture = new Image("/Resources/Explosion1/1.png");
         TextureUp = TextureDown = TextureLeft = TextureRight = new Image[]{texture};
     }
 
