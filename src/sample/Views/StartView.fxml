@@ -15,19 +15,18 @@
       minHeight="512" minWidth="980" alignment="center" spacing="20" >
 
     <Label text="Tank 1990: Rebirth"/>
+    <Label text="From authors: "/>
+    <VBox alignment="CENTER">
+        <Label text="Wróg jest niczym Armia Czerwona – nie zważa na kamratów z drużyny, jest niepowstrzymana i ma jeden cel – zniszczyć orła."/>
+        <Label text="Kolejne fale wrogów zalewają nasze terytorium..."/>
+        <Label text="Ojczyzna Cię potrzebuje!"/>
+        <Label text="Ciebie i jeśli chcesz – Twojego towarzysza przygody."/>
+        <Label text="Stawcie czoła niebezpieczeństwu już teraz!"/>
+    </VBox>
+
     <HBox alignment="center" spacing="20">
-        <VBox alignment="center" spacing="20">
+        <VBox fx:id="player1VBox" alignment="center" spacing="20">
             <ImageView fx:id="player1TankImage" fitHeight="30" fitWidth="30"/>
-            <Label text="W"/>
-            <HBox spacing="20">
-                <Label text="A"/>
-                <Label text="G"/>
-                <Label text="D"/>
-            </HBox>
-            <Label text="S"/>
-        </VBox>
-        <VBox alignment="center" spacing="20">
-            <ImageView fx:id="player2TankImage" fitHeight="30" fitWidth="30"/>
             <Label text="↑"/>
             <HBox spacing="20">
                 <Label text="←"/>
@@ -36,7 +35,18 @@
             </HBox>
             <Label text="↓"/>
         </VBox>
+        <VBox fx:id="player2VBox" alignment="center" spacing="20">
+            <ImageView fx:id="player2TankImage" fitHeight="30" fitWidth="30"/>
+            <Label text="W"/>
+            <HBox spacing="20">
+                <Label text="A"/>
+                <Label text="G"/>
+                <Label text="D"/>
+            </HBox>
+            <Label text="S"/>
+        </VBox>
+
     </HBox>
-    <CheckBox text="2 players"/>
+    <CheckBox fx:id="twoPlayersCheckBox" selected="true" text="2 players" onMouseClicked="#startWithTwoPlayers"/>
     <Button text="Start" onMouseClicked="#startGame"/>
 </VBox>

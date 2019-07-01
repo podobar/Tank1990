@@ -6,6 +6,7 @@ import java.io.File;
 
 public class Bullet extends MovingTile {
     private int noClipTime;
+    private int ownerId;    // 1 - player 1, 2 - player 2, 0 - enemy ?
 
     public int getNoClipTime() {
         return noClipTime;
@@ -15,9 +16,14 @@ public class Bullet extends MovingTile {
         this.noClipTime = noClipTime;
     }
 
-    public Bullet(int iXStarting, int iYStarting, double x, double y, String direction) {
+    public int getOwnerId() {
+        return ownerId;
+    }
 
-        noClipTime = 15; // in 1/60 s
+    public Bullet(int iXStarting, int iYStarting, double x, double y, String direction, int _ownerId) {
+
+        noClipTime = 3; // in 1/60 s
+        ownerId = _ownerId;
 
         IX = iXStarting;    // These two can be used as a destination.
         IY = iYStarting;
@@ -33,7 +39,7 @@ public class Bullet extends MovingTile {
         IsMoving = true;
 
 //        texture = new Image((new File("Explosion1/1.png")).toURI().toString());
-        texture = new Image(new File("Resources/Explosion1/1.png").toURI().toString());
+        texture = new Image("/Resources/Explosion1/1.png");
         TextureUp = TextureDown = TextureLeft = TextureRight = new Image[]{texture};
     }
 

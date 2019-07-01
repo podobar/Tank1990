@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.canvas.Canvas?>
 <HBox fx:id="root" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="sample.GameViewController"
+      fx:controller="sample.Controllers.GameViewController"
       style="-fx-background-color: black;">
-    <Canvas fx:id="canvas"  height="512" width="800"  />
-    <VBox fx:id="menu" spacing="20" minHeight="512" style="-fx-background-color: grey;" alignment="center">
-        <HBox fx:id="enemyBox" minHeight="150" minWidth="180" style="-fx-background-color: pink"/>
-        <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: blue; -fx-padding: 20px">
-            <Label text="Lives: "/>
-            <Label text="Score: "/>
+    <Canvas fx:id="canvas"  height="512" width="800"/>
+    <VBox fx:id="menu" spacing="10" minHeight="512" style="-fx-background-color: grey;" alignment="TOP_CENTER">
+        <GridPane fx:id="enemyBox" minHeight="150" minWidth="180" alignment="center" style="-fx-background-color: pink; -fx-padding: 10px" />
+        <VBox fx:id="player1Box" minHeight="100" minWidth="180" style="-fx-background-color: yellow; -fx-padding: 20px">
+            <Label text="Player 1"/>
+            <Label fx:id="player1LivesLabel" text="Lives: "/>
+            <Label fx:id="player1ScoreLabel" text="Score: "/>
         </VBox>
-        <VBox fx:id="player2Box" minHeight="100" minWidth="180" style="-fx-background-color: green; -fx-padding: 20px;">
-            <Label text="Lives: "/>
-            <Label text="Score: "/>
+        <VBox fx:id="player2Box" minHeight="100" minWidth="180"  style="-fx-background-color: yellow; -fx-padding: 20px;">
+            <Label text="Player 2" textAlignment="center"/>
+            <Label fx:id="player2LivesLabel"/>
+            <Label fx:id="player2ScoreLabel"/>
         </VBox>
-        <Button fx:id="newGameButton" minHeight="50" minWidth="100" text="Reset"/>
+        <Button fx:id="resetGameButton" minHeight="30" minWidth="100" text="Reset" onMouseClicked="#ResetGame" />
+        <Button fx:id="pauseGameButton" minHeight="30" minWidth="100" text="Pause" onMouseClicked="#PauseGame" />
+        <Button fx:id="endGameButton" minHeight="30" minWidth="100" text="Go to credits" managed="false" onMouseClicked="#EndGame" />
     </VBox>
 </HBox>

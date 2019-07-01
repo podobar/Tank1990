@@ -1,225 +1,358 @@
 package sample;
 
+import javafx.scene.image.Image;
 import javafx.util.Pair;
 
 import java.awt.*;
+import java.time.LocalTime;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-public class EnemyTank extends Tank{
-    //Enemy tanks (AI) knows where players and eagle are.
-    //AI tries to either destroy eagle, or kill players when it's possible
-    Tile[][] map;
-    PlayerTank[] players;
-    Tile eagle;
-    int mapHeight,mapWidth;
+public class EnemyTank extends Tank {
+    //Enemy tanks (AI) knows where Board.players and eagle are.
+    //AI tries to either destroy eagle, or kill Board.players when it's possible
+    int w = 25;
+    int h = 16;
+    Tile eagle = new PlainTile(12, 14);
     int shotDelay;
+    private Stack<Point> path;
+    private int reward;
 
-    private void Strategy(){
-        while(true){
-            if(CanShoot())
-                Shoot();
-            else if(IsMovePossible())
-                Move();
-            else
-                Shoot();
-        }
+    public int getReward() {
+        return reward;
     }
-    private boolean CanShoot(){
-        //TODO: Check - maybe you also have to decide in which direction shoot
-        //If there is no indestructible terrain, friendly tanks between this tank and eagle ( this tank is in row || column of eagle) -> shoot eagle
-        if(eagle.IX == IX){
-            for(int i =Math.min(eagle.IY,IY)+1;i<Math.max(eagle.IY,IY)-1;++i)
-                if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
-                    return false;
-            return true;
-        }
-        else if(eagle.IY == IY){
-            for(int i =Math.min(eagle.IX,IX)+1;i<Math.max(eagle.IX,IX)-1;++i)
-                if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
-                    return false;
-            return true;
-        }
-        //If closest player is in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
-        //If there is another player (not closest one) in column or row of enemy tank and there are no obstacles (indestructible terrain, friendly tanks) -> shoot this player
-        if(Math.sqrt(Math.pow(IX-players[0].IX,2) + Math.pow(IY-players[0].IY,2))<= Math.sqrt(Math.pow(IX-players[1].IX,2) + Math.pow(IY-players[1].IY,2))){
-            //Distance from P1 is smaller than P2
-            if(players[0].IX == IX){
-                for(int i =Math.min(players[0].IY,IY)+1;i<Math.max(players[0].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
-                        return false;
-                return true;
-            }
-            else if(players[0].IY == IY){
-                for(int i =Math.min(players[0].IX,IX)+1;i<Math.max(players[0].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
-                        return false;
-                return true;
-            }
-            else if(players[1].IX == IX){
-                for(int i =Math.min(players[1].IY,IY)+1;i<Math.max(players[1].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
-                        return false;
-                return true;
-            }
-            else if(players[1].IY == IY){
-                for(int i =Math.min(players[1].IX,IX)+1;i<Math.max(players[1].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
-                        return false;
-                return true;
-            }
-        }
-        else
-        {
-            if(players[1].IX == IX){
-                for(int i =Math.min(players[1].IY,IY)+1;i<Math.max(players[1].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
-                        return false;
-                return true;
-            }
-            else if(players[1].IY == IY){
-                for(int i =Math.min(players[1].IX,IX)+1;i<Math.max(players[1].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
-                        return false;
-                return true;
-            }
-            if(players[0].IX == IX){
-                for(int i =Math.min(players[0].IY,IY)+1;i<Math.max(players[0].IY,IY)-1;++i)
-                    if(map[i][IX] instanceof EnemyTank || !map[i][IX].CanShotThrough)
-                        return false;
-                return true;
-            }
-            else if(players[0].IY == IY){
-                for(int i =Math.min(players[0].IX,IX)+1;i<Math.max(players[0].IX,IX)-1;++i)
-                    if(map[IY][i] instanceof EnemyTank || !map[IY][i].CanShotThrough)
-                        return false;
-                return true;
-            }
-        }
-        return true;
-    }
-    private void Shoot(){
-        //TODO: shoot a bullet i
 
+    public EnemyTank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight, int reward, int _speed, int _attackSpeed, int _stamina) {
+        super(iX, iY, x, y, texturesUp, texturesDown, texturesLeft, texturesRight);
+        this.reward = reward;
+        speed = _speed;
+        attackSpeed = _attackSpeed;
+        stamina = _stamina;
+        CreatePath();
     }
-    private boolean IsMovePossible(){
-        //TODO: If any shots to objectives is not available(player tanks, eagle) and tank can't move (is stuck between terrain tiles, but not between other AI tanks) it shoots to terrain.
-        return true;
+
+    public boolean MakeMove() {
+        if (!IsMoving) {
+            if (CanShootToObjective())
+                return true;
+
+            if (path.isEmpty()) {
+                CreatePath();
+                if (path.isEmpty())
+                    return false; //You reached your destination
+            } else {
+                Point nextTile = path.pop();
+                if (Math.abs(nextTile.x - IX) + Math.abs(nextTile.y - IY) > 1) {
+                    CreatePath();
+                    if (path.isEmpty())
+                        return false;
+                    else
+                        nextTile = path.pop();
+
+                }
+                if (nextTile.x == IX + 1) {
+                    Direction = "RIGHT";
+                    texture = TextureRight[0];
+                } else if (nextTile.x == IX - 1) {
+                    Direction = "LEFT";
+                    texture = TextureLeft[0];
+                } else if (nextTile.y == IY - 1) {
+                    Direction = "UP";
+                    texture = TextureUp[0];
+                } else if (nextTile.y == IY + 1) {
+                    Direction = "DOWN";
+                    texture = TextureDown[0];
+                }
+            }
+        }
+        return false;
     }
-    private void Move(){
-        //TODO: Own implementation of A* algorithm to move through the map
-        //What we wave on start:
+
+    private boolean CanShootToObjective() {
+        LocalTime time = LocalTime.now();
+        switch( Math.abs(time.getNano()%60 * time.getSecond())%3){
+            case 0: //Shoot eagle if possible
+                if (Board.Map[eagle.IX][eagle.IY].stamina > 0) {
+                    if (eagle.IX == IX) {
+                        for (int i = IY + 1; i < eagle.IY; ++i) {
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        }
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else if (eagle.IY == IY) {
+                        if (eagle.IX < IX) {
+                            for (int i = IX - 1; i > eagle.IX; --i) {
+                                if (Board.Map[i][IY].CanBeDestroyed == false)
+                                    return false;
+                            }
+                            texture = TextureLeft[0];
+                            Direction = "LEFT";
+                            return true;
+                        } else //eagle.IX > IX
+                        {
+                            for (int i = IX + 1; i < eagle.IX; ++i)
+                                if (Board.Map[i][IY].CanBeDestroyed == false)
+                                    return false;
+                            texture = TextureRight[0];
+                            Direction = "RIGHT";
+                            return true;
+                        }
+                    }
+                }
+                break;
+            case 1: //check for shooting ability into player 0 earlier than player 1
+                if (Board.players[0].IX == IX) {
+                    if (Board.players[0].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[0].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[0].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[0].IY == IY) {
+                    if (Board.players[0].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[0].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[0].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
+                }
+                if (Board.players[1].IX == IX) {
+                    if (Board.players[1].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[1].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[1].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[1].IY == IY) {
+                    if (Board.players[1].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[1].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[1].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
+                }
+                break;
+            case 2:
+                if (Board.players[1].IX == IX) {
+                    if (Board.players[1].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[0].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[1].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[1].IY == IY) {
+                    if (Board.players[1].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[1].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[1].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
+                }
+                if (Board.players[0].IX == IX) {
+                    if (Board.players[0].IY > IY) { //player lower than enemy
+                        for (int i = IY + 1; i < Board.players[0].IY; ++i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureDown[0];
+                        Direction = "DOWN";
+                        return true;
+                    } else { //player higher than enemy
+                        for (int i = IY - 1; i > Board.players[0].IY; --i)
+                            if (Board.Map[IX][i].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureUp[0];
+                        Direction = "UP";
+                        return true;
+                    }
+                } else if (Board.players[0].IY == IY) {
+                    if (Board.players[0].IX < IX) { //player is on the left of the enemy
+                        for (int i = IX - 1; i > Board.players[0].IX; --i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureLeft[0];
+                        Direction = "LEFT";
+                        return true;
+                    } else { //player is on the right of the enemy
+                        for (int i = IX + 1; i < Board.players[0].IX; ++i)
+                            if (Board.Map[i][IY].CanBeDestroyed == false)
+                                return false;
+                        texture = TextureRight[0];
+                        Direction = "RIGHT";
+                        return true;
+                    }
+                }
+                break;
+        }
+        return false;
+    }
+
+    private void CreatePath() {
+        //Own implementation of A* algorithm, on start we have:
         // -IX, IY - tile coordinates,
-        // -We know where the eagle and players are,
-        // -We have a map of Tiles (game map)
+        // -We know where the eagle and Board.players are,
+        // -We have a Board.Map of Tiles (game Board.Map)
         // -We can only move up, down, left or right
 
         //Assumptions of Tile weights:
         // -Tanks are like indestructible terrain tiles, their weight is Double.POSITIVE_INFINITY;
         // -Destructible tiles have weight which depends on delay between shots multiplied by their stamina (terrain can take certain amount of damage)
         // -Normal tiles have weight = 1
-
-        Double[][] estimations = new Double[mapHeight][mapWidth];
-        Double[][] distance = new Double[mapHeight][mapWidth];
-        Point[][] previous = new Point[mapHeight][mapWidth];
-        for (Tile[] row: map) {
-            for(Tile t: row){
-                estimations[t.IY][t.IX] = Math.sqrt(Math.pow(t.IY-eagle.IY,2) + Math.pow(t.IX-eagle.IX,2)); //Euclidean distance as approx. heurestic
-                distance[t.IY][t.IX] = Double.POSITIVE_INFINITY;
+        Double[][] estimations = new Double[w][h];
+        Double[][] distance = new Double[w][h];
+        Point[][] previous = new Point[w][h];
+        for (int i = 0; i < w; ++i)
+            for (int j = 0; j < h; ++j) {
+                estimations[i][j] = Math.sqrt(Math.pow(j - eagle.IY, 2) + Math.pow(i - eagle.IX, 2)); //Euclidean distance as approx. heurestic
+                distance[i][j] = Double.POSITIVE_INFINITY;
             }
-        }
-        distance[IX][IY]=0.0;
-        Stack<Point> path = new Stack<>();
+        distance[IX][IY] = 0.0;
+        path = new Stack<>();
         PriorityQueue<Point> open = new PriorityQueue<Point>((p1, p2) -> {
-            return (int)(distance[p1.y][p1.x] + estimations[p1.y][p1.x] - distance[p2.y][p2.x] + estimations[p2.y][p2.x]);
+            return (int) (distance[p1.x][p1.y] + estimations[p1.x][p1.y] - distance[p2.x][p2.y] + estimations[p2.x][p2.y]);
         });
-        PriorityQueue<Point> close =  new PriorityQueue<Point>((p1, p2) -> {
-            return (int)(distance[p1.y][p1.x] + estimations[p1.y][p1.x] - distance[p2.y][p2.x] + estimations[p2.y][p2.x]);
+        PriorityQueue<Point> close = new PriorityQueue<Point>((p1, p2) -> {
+            return (int) (distance[p1.x][p1.y] + estimations[p1.x][p1.y] - distance[p2.x][p2.y] + estimations[p2.x][p2.y]);
         });
 
-        open.add(new Point(IX,IY));
+        open.add(new Point(IX, IY));
 
-        while(!open.isEmpty()){
+        while (!open.isEmpty()) {
             Point p = open.poll();
             close.add(p);
-            if(eagle.IX ==p.x && eagle.IY==p.y)
+            if (eagle.IX == p.x && eagle.IY == p.y)
                 break;
-            //add neighbors (left right up down) if they're not in close
-            Point leftNeighbor = new Point(p.x-1,p.y); //LEFT
-            Point rightNeighbor = new Point(p.x+1,p.y); //RIGHT
-            Point upNeighbor = new Point(p.x,p.y-1); //UP
-            Point downNeighbor = new Point(p.x,p.y+1); //DOWN
+            Point leftNeighbor = new Point(p.x - 1, p.y); //LEFT
+            Point rightNeighbor = new Point(p.x + 1, p.y); //RIGHT
+            Point upNeighbor = new Point(p.x, p.y - 1); //UP
+            Point downNeighbor = new Point(p.x, p.y + 1); //DOWN
 
-            if(p.x-1>=0 && !close.contains(leftNeighbor)){
-                if(!open.contains(leftNeighbor)){
-                    distance[p.y][p.x-1]=Double.POSITIVE_INFINITY;
+            if (p.x - 1 >= 0 && !close.contains(leftNeighbor)) {
+                if (!open.contains(leftNeighbor)) {
+                    distance[p.x - 1][p.y] = Double.POSITIVE_INFINITY;
                     open.add(leftNeighbor);
                 }
-                if(distance[p.y][p.x-1] > distance[p.y][p.x] + EdgeWeight(p,leftNeighbor)){
-                    distance[p.y][p.x-1] = distance[p.y][p.x] + EdgeWeight(p,leftNeighbor);
+                if (distance[p.x - 1][p.y] > distance[p.x][p.y] + EdgeWeight(p, leftNeighbor)) {
+                    distance[p.x - 1][p.y] = distance[p.x][p.y] + EdgeWeight(p, leftNeighbor);
                     //update priorities
                     open.remove(leftNeighbor);
                     open.add(leftNeighbor);
 
-                    previous[leftNeighbor.y][leftNeighbor.x]=p;
+                    previous[leftNeighbor.x][leftNeighbor.y] = p;
                 }
             }
-            if(p.x+1>=0 && !close.contains(rightNeighbor)){
-                if(!open.contains(rightNeighbor)){
-                    distance[p.y][p.x+1]=Double.POSITIVE_INFINITY;
+            if (p.x + 1 <= w - 1 && !close.contains(rightNeighbor)) {
+                if (!open.contains(rightNeighbor)) {
+                    distance[p.x + 1][p.y] = Double.POSITIVE_INFINITY;
                     open.add(rightNeighbor);
                 }
-                if(distance[p.y][p.x+1] > distance[p.y][p.x] + EdgeWeight(p,rightNeighbor)){
-                    distance[p.y][p.x+1] = distance[p.y][p.x] + EdgeWeight(p,rightNeighbor);
+                if (distance[p.x + 1][p.y] > distance[p.x][p.y] + EdgeWeight(p, rightNeighbor)) {
+                    distance[p.x + 1][p.y] = distance[p.x][p.y] + EdgeWeight(p, rightNeighbor);
                     //update priorities
                     open.remove(rightNeighbor);
                     open.add(rightNeighbor);
 
-                    previous[rightNeighbor.y][rightNeighbor.x]=p;
+                    previous[rightNeighbor.x][rightNeighbor.y] = p;
                 }
             }
-            if(p.y+1>=0 && !close.contains(downNeighbor)){
-                if(!open.contains(downNeighbor)){
-                    distance[p.y+1][p.x]=Double.POSITIVE_INFINITY;
+            if (p.y + 1 <= h - 1 && !close.contains(downNeighbor)) {
+                if (!open.contains(downNeighbor)) {
+                    distance[p.x][p.y + 1] = Double.POSITIVE_INFINITY;
                     open.add(downNeighbor);
                 }
-                if(distance[p.y+1][p.x] > distance[p.y][p.x] + EdgeWeight(p,downNeighbor)){
-                    distance[p.y+1][p.x] = distance[p.y][p.x] + EdgeWeight(p,downNeighbor);
+                if (distance[p.x][p.y + 1] > distance[p.x][p.y] + EdgeWeight(p, downNeighbor)) {
+                    distance[p.x][p.y + 1] = distance[p.x][p.y] + EdgeWeight(p, downNeighbor);
                     //update priorities
                     open.remove(downNeighbor);
                     open.add(downNeighbor);
 
-                    previous[downNeighbor.y][downNeighbor.x]=p;
+                    previous[downNeighbor.x][downNeighbor.y] = p;
                 }
             }
-            if(p.y-1>=0 && !close.contains(upNeighbor)){
-                if(!open.contains(upNeighbor)){
-                    distance[p.y-1][p.x]=Double.POSITIVE_INFINITY;
+            if (p.y - 1 >= 0 && !close.contains(upNeighbor)) {
+                if (!open.contains(upNeighbor)) {
+                    distance[p.x][p.y - 1] = Double.POSITIVE_INFINITY;
                     open.add(upNeighbor);
                 }
-                if(distance[p.y-1][p.x] > distance[p.y][p.x] + EdgeWeight(p,upNeighbor)){
-                    distance[p.y-1][p.x] = distance[p.y][p.x] + EdgeWeight(p,upNeighbor);
+                if (distance[p.x][p.y - 1] > distance[p.x][p.y] + EdgeWeight(p, upNeighbor)) {
+                    distance[p.x][p.y - 1] = distance[p.x][p.y] + EdgeWeight(p, upNeighbor);
                     //update priorities
                     open.remove(upNeighbor);
                     open.add(upNeighbor);
 
-                    previous[upNeighbor.y][upNeighbor.x]=p;
+                    previous[upNeighbor.x][upNeighbor.y] = p;
                 }
             }
         }//while
-        Point pathNode = previous[eagle.IY][eagle.IX];
-        while(pathNode.x!=IX && pathNode.y!=IY){
-            path.add((Point)pathNode.clone());
-            pathNode=previous[pathNode.y][pathNode.x];
+        if (previous[eagle.IX][eagle.IY] != null) {
+            Point pathNode = previous[eagle.IX][eagle.IY];
+            while (pathNode.x != IX || pathNode.y != IY) {
+                path.add((Point) pathNode.clone());
+                pathNode = previous[pathNode.x][pathNode.y];
+            }
         }
-        //On top of the stack is the next move;
     }
-    private Double EdgeWeight(Point from, Point to)
-    {//From [i,j] to [k,l]
-        if(map[to.y][to.x].CanMoveThrough)
+
+    private Double EdgeWeight(Point from, Point to) {//From [i,j] to [k,l]
+        if (Board.Map[to.x][to.y].CanMoveThrough)
             return 1.0;
-        else if(map[to.y][to.x].CanShotThrough)
-            return map[to.y][to.x].stamina * 1.0;
+        else if (Board.Map[to.x][to.y].CanBeDestroyed)
+            return Board.Map[to.x][to.y].stamina * 1.0;
         else
             return Double.POSITIVE_INFINITY;
     }

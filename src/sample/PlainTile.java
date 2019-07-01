@@ -2,37 +2,45 @@ package sample;
 
 import javafx.scene.image.Image;
 
-public class PlainTile extends Tile{
-  
+public class PlainTile extends Tile {
+
     Image[] StagesOfTile;
 
     public PlainTile(int x, int y, Image[] stagesOfTile, boolean canShotThrough, boolean canBeDestroyed, int shield) {
         //Texture tile, which can or cannot be destroyed
         IX = x;
         IY = y;
-        StagesOfTile=stagesOfTile;
+        StagesOfTile = stagesOfTile;
         CanMoveThrough = false;
         CanShotThrough = canShotThrough;
         CanBeDestroyed = canBeDestroyed;
-        stamina=shield;
+        stamina = shield;
+        texture = StagesOfTile[stagesOfTile.length-1];
     }
-    public boolean IsDestroyed(){
-        if(stamina>1){
-            --stamina;
-            texture=StagesOfTile[stamina-1];
-            return false;
+
+    @Override
+    public boolean IsDestroyed() {
+        if(CanBeDestroyed){
+            if (stamina > 1) {
+                --stamina;
+                texture = StagesOfTile[stamina - 1];
+                return false;
+            } else
+                return true;
         }
         else
-            return true;
+            return false;
+
     }
+
     public PlainTile(int x, int y) {
         IX = x;
         IY = y;
         CanMoveThrough = true;
         CanShotThrough = true;
     }
-    public PlainTile()
-    {
+
+    public PlainTile() {
         // Add texture initialization
         CanMoveThrough = true;
         CanShotThrough = true;
@@ -40,11 +48,11 @@ public class PlainTile extends Tile{
 
     @Override
     public double getX() {
-        return 0;
+        return IX/32;
     }
 
     @Override
     public double getY() {
-        return 0;
+        return IY/32;
     }
 }

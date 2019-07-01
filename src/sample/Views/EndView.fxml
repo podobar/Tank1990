@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <HBox xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="sample.Controllers.EndViewController"
-            minHeight="512" minWidth="980">
-    <Label text="Tank 1990: Rebirth"/>
-    <VBox fx:id="player1StatsBox">
-
-    </VBox>
-    <VBox fx:id="player2StatsBox">
-
+            minHeight="512" minWidth="980" alignment="center">
+    <VBox alignment="CENTER" spacing="10">
+        <Label text="Thank you for playing Tank 1990: Rebirth!" />
+        <Label text="Inspired by historical events."/>
+        <Label text="This work of fiction was designed, developed and produced by a monocultural team of the same slavic origin."/>
+        <Label text="Tank, bullets and explosions textures: zironid_n (opengameart.org)"/>
+        <Label text="Eagle texture:  Photo by Brett Sayles from Pexels.com"/>
+        <Label text="Indestructible tile (Nokia) texture:  Discostu at commons.Wikimedia.com"/>
+        <Label text="Joining two Nokia images together: https://www.imgonline.com.ua/eng/combine-two-images-into-one.php"/>
+        <Label text="Bricks: Metropolis Alabaster bricks at AustralBricks.com.au"/>
     </VBox>
 </HBox>

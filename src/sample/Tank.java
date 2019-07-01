@@ -5,31 +5,28 @@ import javafx.scene.image.Image;
 
 // Should I add classes PlayerTank and EnemyTank?
 abstract public class Tank extends MovingTile {
-    private int hp; // how many shots can tank take
-    private int level; //
-    private int ammoType;
-    //private double speed; // 1 means that tank moves 1 tile per second // Moved to MovingTile class
-    private double attackSpeed; // bullets per second?
-//    /*private*/ Image texture; // depends on level of tank // Moved to Tile class
-    private int upgrades; // flags for each upgrade [4 youngest bits]
+    private int id;
 
-    //TEMP
 
+    public int getId() {
+        return id;
+    }
+
+    private static int idCounter = 0;
+    protected double attackSpeed; // bullets per second?
     private int ShotDelay;
 
     private boolean IsShooting;
 
-    public Tank(){
-
-    }
-
     public Tank(int iX, int iY, double x, double y, Image[] texturesUp, Image[] texturesDown, Image[] texturesLeft, Image[] texturesRight) {
+        id = idCounter++;
+
         IX = iX;
         IY = iY;
         X = x;
         Y = y;
 
-        this.texture = texturesRight[0];
+        this.texture = texturesUp[0];
 
         TextureUp = texturesUp.clone();
         TextureDown = texturesDown.clone();
@@ -43,10 +40,11 @@ abstract public class Tank extends MovingTile {
 
         TextureChangeCounter = 0;
 
-        Direction = "RIGHT";
+        Direction = "UP";
 
         CanMoveThrough = false;
         CanShotThrough = false;
+        CanBeDestroyed = true;
 
 
         IsMoving = false;
@@ -61,8 +59,12 @@ abstract public class Tank extends MovingTile {
         IsShooting = shooting;
     }
 
-    public void ShotDelay(){
-        ShotDelay =(int) (60 / attackSpeed);
+    public void ShotDelay() {
+        ShotDelay = (int) (120 / attackSpeed);
+    }
+
+    public Image getDefaultTexture(){
+        return TextureUp[0];
     }
 
     // False when delay has ended.
@@ -73,8 +75,10 @@ abstract public class Tank extends MovingTile {
         return true;
     }
 
-    public void Explode(Image ExplosionImage){
+    public void Explode(Image ExplosionImage) {
         texture = ExplosionImage;
+        CanMoveThrough = true;
+        CanShotThrough = true;
         //IsMoving = false;
     }
 }
